@@ -34,13 +34,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'employee_name',
             'employee_number',
             'original_contract_path',
+            [
+                'attribute' => 'duration_unit',
+                'value' => function ($model) {
+                return $model->durationUnit->unit;
+            },
+            ],
             'signed_contract_path:ntext',
             'contract_duration',
             'employee_workstation',
-            'created_at',
-            'updated_at',
-            'created_by',
-            'updated_by',
+            // 'created_at',
+            'updated_at:datetime',
+            // 'created_by',
+            // 'updated_by',
         ],
     ]) ?>
 

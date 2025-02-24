@@ -29,7 +29,7 @@ use yii\behaviors\TimestampBehavior;
 class Contracts extends \yii\db\ActiveRecord
 {
 
-
+    public $attachment;
     public function behaviors()
     {
         return [
@@ -51,7 +51,7 @@ class Contracts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['contract_number', 'employee_number', 'original_contract_path', 'contract_duration', 'duration_unit'], 'required'],
+            //[['contract_number', 'employee_number', 'original_contract_path', 'contract_duration', 'duration_unit'], 'required'],
             [['contract_number', 'employee_name', 'employee_number', 'original_contract_path', 'signed_contract_path', 'contract_duration', 'employee_workstation', 'created_at', 'updated_at', 'created_by', 'updated_by', 'duration_unit'], 'default', 'value' => null],
             [['signed_contract_path'], 'string'],
             [['created_at', 'updated_at', 'created_by', 'updated_by', 'duration_unit'], 'integer'],
@@ -61,6 +61,7 @@ class Contracts extends \yii\db\ActiveRecord
             [['original_contract_path'], 'string', 'max' => 450],
             [['contract_duration'], 'string', 'max' => 255],
             [['employee_workstation'], 'string', 'max' => 250],
+
         ];
     }
 
@@ -94,6 +95,11 @@ class Contracts extends \yii\db\ActiveRecord
     public function getWorkflowEntries()
     {
         return $this->hasMany(WorkflowEntries::class, ['contract_id' => 'id']);
+    }
+
+    public function getDurationUnit()
+    {
+        return $this->hasOne(DurationUnits::class, ['id' => 'duration_unit']);
     }
 
     /**

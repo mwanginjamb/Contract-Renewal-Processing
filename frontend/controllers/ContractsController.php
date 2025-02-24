@@ -2,11 +2,15 @@
 
 namespace frontend\controllers;
 
-use app\models\Contracts;
-use app\models\ContractsSearch;
+use Yii;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
+use app\models\Contracts;
 use yii\filters\VerbFilter;
+use yii\helpers\FileHelper;
+use yii\helpers\ArrayHelper;
+use app\models\DurationUnits;
+use app\models\ContractsSearch;
+use yii\web\NotFoundHttpException;
 
 /**
  * ContractsController implements the CRUD actions for Contracts model.
@@ -29,6 +33,18 @@ class ContractsController extends Controller
                 ],
             ]
         );
+    }
+
+    public function beforeAction($action)
+    {
+        $ExceptedActions = [
+            'upload',
+        ];
+
+        if (in_array($action->id, $ExceptedActions)) {
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
     }
 
     /**
@@ -93,12 +109,16 @@ class ContractsController extends Controller
     {
         $model = $this->findModel($id);
 
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        $durationUnits = ArrayHelper::map(DurationUnits::find()->all(), 'id', 'unit'); // DurationUnits::find()->all()
+
         return $this->render('update', [
             'model' => $model,
+            'durationUnits' => $durationUnits
         ]);
     }
 
@@ -130,5 +150,77 @@ class ContractsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    public function actionUpload()
+    {
+        $targetPath = '';
+        if ($_FILES) {
+            $uploadedFile = $_FILES['attachment']['name'];
+            list($pref, $ext) = explode('.', $uploadedFile);
+            $targetPath = './uploads/' . Yii::$app->utility->processPath($pref) . '.' . $ext; // Create unique target upload path
+            $attachmentName = Yii::$app->utility->processPath($pref) . '.' . $ext;
+            // Create upload directory if it dnt exist.
+            if (!is_dir(dirname($targetPath))) {
+                FileHelper::createDirectory(dirname($targetPath));
+                chmod(dirname($targetPath), 0755);
+            }
+        }
+
+        // Upload
+        if (Yii::$app->request->isPost) {
+            $parentDocument = $this->findModel(Yii::$app->request->post('Key'));
+            $parentDocumentNo = NULL;
+            if (is_object($parentDocument)) {
+                $parentDocumentNo = $parentDocument->contract_number;
+            }
+            //  \Yii::$app->utility->printrr($parentDocumentNo);
+
+
+
+            // Create a directory to store doc related to this proposal
+            $folder = Yii::$app->sharepoint->createFolder($parentDocumentNo);
+
+
+            $metadata = [];
+            if (is_object($parentDocument) && isset($parentDocument->id)) {
+                $metadata = [
+                    'Application' => $parentDocument->contract_number,
+                    'Employee' => $parentDocument->employee_number,
+                    'Station' => $parentDocument->employee_workstation
+                ];
+            }
+            Yii::$app->session->set('metadata', $metadata);
+
+
+            $file = $_FILES['attachment']['tmp_name'];
+            $binary = file_get_contents($file);
+
+            //Return JSON
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            if ($binary) {
+                // Upload to sharepoint
+
+                $spResult = Yii::$app->sharepoint->attach_toLibrary(env('SP_LIBRARY') . '\\' . $parentDocumentNo, $binary, $attachmentName, $metadata = [], TRUE);
+                Yii::$app->session->set('SP_PATH', $spResult);
+                $parentDocument->original_contract_path = $spResult;
+                $parentDocument->save();
+
+                return [
+                    'status' => 'success',
+                    'message' => 'File Uploaded Successfully. :- ' . $spResult,
+                    'filePath' => $targetPath
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'message' => 'Could not upload file at the moment.',
+                    'error' => "Error uploading the file: " . Yii::$app->params['phpFileUploadErrors'][$_FILES["attachment"]["error"]],
+                ];
+            }
+        }
+
+
     }
 }
