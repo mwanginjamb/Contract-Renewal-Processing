@@ -50,25 +50,28 @@ use yii\bootstrap5\ActiveForm;
                     <?= $form->field($model, 'employee_workstation')->textInput(['maxlength' => true]) ?>
                 </div>
             </div>
+
+            <div class="form-group">
+                <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+            </div>
+
+            <?php ActiveForm::end(); ?>
         </div>
         <div class="col-md-6">
             <p class="text alert alert-info">Contract File Preview</p>
             <?php if (!$model->original_contract_path)
                 echo 'No file uploaded';
             else
-                echo Html::img('@web/' . $model->original_contract_path) ?>
-            </div>
+                print '<iframe src="data:application/pdf;base64,' . $content . '" height="950px" width="100%"></iframe>';
+            ?>
         </div>
-
-
-
-
-
-        <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+
+
+
+
+
 
 </div>
 

@@ -268,9 +268,20 @@ class Sharepoint extends Component
 
     function readLibrary($targetPath)
     {
-        $ctx = $this->connectWithUserCredentials(Yii::$app->params['sharepointUrl'] . '/' . env('SP_SITE'), env('SP_USERNAME'), env('SP_PASSWORD'));
+        $ctx = $this->connectWithUserCredentials(env('SP_URL') . '/' . env('SP_SITE'), env('SP_USERNAME'), env('SP_PASSWORD'));
         $fileContent = File::openBinary($ctx, $targetPath, false);
         return $fileContent;
+    }
+
+    /** Generate a reletive path from file absolute link */
+    public function getBinary($Link)
+    {
+        $url = $Link;
+        list($scheme, $relativePath) = explode('sites', $url);
+        $relativeUrl = '/sites' . $relativePath;
+        $res = $this->readLibrary($relativeUrl);
+        $result = base64_encode($res);
+        return $result;
     }
 
 
