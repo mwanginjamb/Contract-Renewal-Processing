@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="workflow-template-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h3 class="fw-bold"><?= Html::encode($this->title) ?></h3>
 
     <?= $this->render('_form', [
         'model' => $model,

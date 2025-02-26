@@ -31,7 +31,7 @@ use yii\bootstrap5\ActiveForm;
                     <?= $form->field($model, 'employee_number')->textInput(['maxlength' => true]) ?>
                 </div>
                 <div class="col-md-6">
-                    <?= $form->field($model, 'attachment')->fileInput(['maxlength' => true]) ?>
+                    <?= (!$model->isNewRecord) ? $form->field($model, 'attachment')->fileInput(['maxlength' => true]) : '' ?>
                 </div>
             </div>
 

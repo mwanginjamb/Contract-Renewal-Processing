@@ -477,14 +477,14 @@ function requestStateUpdater(fieldParentNode, notificationType, msg = '') {
 
 // File upload Indicator
 
-function uploadIndicator(fieldParentNode) {
+function uploadIndicator(fieldParentNode, textContent = false) {
     fieldParentNode = document.querySelector(`${fieldParentNode}`);
     let span = document.createElement('span');
     span.classList.add('text');
     span.classList.add('text-success');
     span.classList.add('small');
     span.classList.add('upload-indicator');
-    span.innerText = 'Uploading please wait ....';
+    span.innerText = textContent || 'Uploading please wait ....';
     fieldParentNode.appendChild(span);
 }
 
@@ -512,6 +512,9 @@ async function globalUpload(attachmentService = false, entity, fieldName, docume
 
     // show upload indicator
     uploadIndicator(formField);
+    setTimeout(() => {  // clean up the notification elements after 3 seconds
+        removeUploadIndicator();
+    }, 3000);
 
     const formData = new FormData();
     formData.append("attachment", fileInput.files[0]);
@@ -563,7 +566,13 @@ async function globalUpload(attachmentService = false, entity, fieldName, docume
         fileInput.value = '';
         console.log(`File Upload Request`);
         console.log(Response);
-
+        if (Response.status === 'success') {
+            notifySuccess(formField, 'File uploaded successfully');
+            setTimeout(() => {  // clean up the notification elements after 3 seconds
+                removeUploadIndicator();
+                location.reload(true);
+            }, 3000);
+        }
 
     } catch (error) {
         console.log(error);

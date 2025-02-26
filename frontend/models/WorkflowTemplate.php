@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "workflow_template".
@@ -25,6 +27,13 @@ class WorkflowTemplate extends \yii\db\ActiveRecord
 {
 
 
+    public function behaviors()
+    {
+        return [
+            BlameableBehavior::class,
+            TimestampBehavior::class
+        ];
+    }
     /**
      * {@inheritdoc}
      */
@@ -39,6 +48,7 @@ class WorkflowTemplate extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            ['workflow_name', 'required'],
             [['sequence', 'user_id', 'workflow_name', 'workflow_role', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['sequence', 'user_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['workflow_name', 'workflow_role'], 'string', 'max' => 150],
@@ -89,6 +99,11 @@ class WorkflowTemplate extends \yii\db\ActiveRecord
     public function getWorkflowEntries()
     {
         return $this->hasMany(WorkflowEntries::class, ['template_id' => 'id']);
+    }
+
+    public function getWorkflowMembers()
+    {
+        return $this->hasMany(WorkflowTemplateMembers::class, ['workflow_id' => 'id']);
     }
 
     /**

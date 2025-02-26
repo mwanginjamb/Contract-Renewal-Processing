@@ -2,6 +2,8 @@
 
 namespace frontend\controllers;
 
+use app\models\WorkflowEntries;
+use app\models\WorkflowTemplate;
 use Yii;
 use yii\web\Controller;
 use app\models\Contracts;
@@ -71,8 +73,10 @@ class ContractsController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'content' => $model->original_contract_path ? Yii::$app->sharepoint->getBinary($model->original_contract_path) : NULL
         ]);
     }
 
@@ -92,9 +96,12 @@ class ContractsController extends Controller
         } else {
             $model->loadDefaultValues();
         }
+        $durationUnits = ArrayHelper::map(DurationUnits::find()->all(), 'id', 'unit'); // DurationUnits::find()->all()
 
         return $this->render('create', [
             'model' => $model,
+            'durationUnits' => $durationUnits,
+            'content' => $model->original_contract_path ? Yii::$app->sharepoint->getBinary($model->original_contract_path) : NULL
         ]);
     }
 
@@ -223,5 +230,39 @@ class ContractsController extends Controller
         }
 
 
+    }
+
+
+    public function actionSendForApproval($id)
+    {
+        $contractId = $id;
+        // Use the default/first Workflow Template where workflow_name is not null
+        $approvalTemplate = WorkflowTemplate::find()->where(['IS NOT', 'workflow_name', NULL])->orderBy(['id' => SORT_DESC])->one();
+        if ($approvalTemplate) {
+            // Get WorkflowTemplateMembers for this template
+            $members = $approvalTemplate->workflowMembers;
+            // if members exist create workflow entries for the subject contract
+            //Yii::$app->utility->printrr($members);
+            if ($members) {
+                foreach ($members as $member) {
+                    $workflowEntry = new WorkflowEntries();
+                    $workflowEntry->template_id = $approvalTemplate->id;
+                    $workflowEntry->approver_id = $member->approver_id;
+                    $workflowEntry->contract_id = $contractId;
+                    $workflowEntry->approvalStatus = 1;
+
+
+                    if ($workflowEntry->save()) {
+                        Yii::$app->session->setFlash('success', 'Contract sent for approval successfully.');
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Error sending contract for approval.');
+                    }
+
+                }
+            }
+        } else {
+            Yii::$app->session->setFlash('error', 'Error sending contract for approval: No Approval Template Set.');
+        }
+        return $this->redirect(['view', 'id' => $contractId]);
     }
 }

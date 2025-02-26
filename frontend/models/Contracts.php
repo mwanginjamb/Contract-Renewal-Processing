@@ -61,6 +61,7 @@ class Contracts extends \yii\db\ActiveRecord
             [['original_contract_path'], 'string', 'max' => 450],
             [['contract_duration'], 'string', 'max' => 255],
             [['employee_workstation'], 'string', 'max' => 250],
+            [['contract_number'], 'unique']
 
         ];
     }
