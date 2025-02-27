@@ -49,7 +49,7 @@ class WorkflowTemplateMembers extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['approver_name', 'approver_email', 'sequence'], 'required'],
+            [['approver_name', 'sequence'], 'required'],
             [['approver_name', 'approver_email', 'approver_phone_number', 'sequence', 'user_id', 'workflow_id', 'created_at', 'updated_at', 'updated_by', 'created_by'], 'default', 'value' => null],
             [['sequence', 'user_id', 'workflow_id', 'created_at', 'updated_at', 'updated_by', 'created_by'], 'integer'],
             [['approver_name'], 'string', 'max' => 200],

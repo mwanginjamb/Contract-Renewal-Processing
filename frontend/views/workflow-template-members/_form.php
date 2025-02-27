@@ -12,11 +12,11 @@ use yii\bootstrap5\ActiveForm;
 
     <?php $form = ActiveForm::begin(['id' => 'workflow-template-form']); ?>
 
-    <?= $form->field($model, 'approver_name')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'approver_name')->dropDownList($users, ['prompt' => 'Select ..']) ?>
 
-    <?= $form->field($model, 'approver_email')->textInput(['maxlength' => true]) ?>
+    <?php $form->field($model, 'approver_email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'approver_phone_number')->textInput(['maxlength' => true]) ?>
+    <?php $form->field($model, 'approver_phone_number')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'sequence')->textInput(['type' => 'number']) ?>
 

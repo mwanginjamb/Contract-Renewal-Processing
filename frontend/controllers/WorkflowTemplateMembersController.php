@@ -3,10 +3,12 @@
 namespace frontend\controllers;
 
 use Yii;
+use app\models\User;
 use yii\helpers\Url;
 use yii\web\Response;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\bootstrap5\ActiveForm;
 use yii\web\NotFoundHttpException;
 use app\models\WorkflowTemplateMembers;
@@ -72,6 +74,7 @@ class WorkflowTemplateMembersController extends Controller
     public function actionCreate()
     {
         $model = new WorkflowTemplateMembers();
+        $users = ArrayHelper::map(User::find()->all(), 'id', 'username');
 
         // If it's an AJAX validation request
         if (Yii::$app->request->isAjax && $model->load(Yii::$app->request->post())) {
@@ -79,10 +82,14 @@ class WorkflowTemplateMembersController extends Controller
             return ActiveForm::validate($model);
         }
 
-        if ($this->request->isPost) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $user = User::findOne(['id' => $this->request->post()['WorkflowTemplateMembers']['approver_name']]);
 
             $model->workflow_id = Yii::$app->request->get('workflow_template_id');
-            if ($model->load($this->request->post()) && $model->save()) {
+            $model->user_id = $user->id;
+            $model->approver_name = $user->username;
+            $model->approver_email = $user->email;
+            if ($model->save()) {
                 return $this->redirect(Url::toRoute(['workflow-template/view', 'id' => $model->workflow_id]));
             }
         } else {
@@ -93,11 +100,13 @@ class WorkflowTemplateMembersController extends Controller
         if (Yii::$app->request->isAjax) {
             return $this->renderAjax('create', [
                 'model' => $model,
+                'users' => $users
             ]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'users' => $users
         ]);
     }
 

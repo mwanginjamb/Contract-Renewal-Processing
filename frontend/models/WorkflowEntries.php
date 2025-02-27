@@ -19,6 +19,7 @@ use yii\behaviors\TimestampBehavior;
  * @property int|null $created_by
  * @property int|null $updated_by
  * @property int|null $contract_id
+ * @property int|null $sequence
  *
  * @property ApprovalStatus $approvalStatus
  * @property WorkflowTemplate $approver
@@ -53,9 +54,10 @@ class WorkflowEntries extends \yii\db\ActiveRecord
             [['template_id', 'approver_id', 'approval_status', 'actioned_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'contract_id'], 'default', 'value' => null],
             [['template_id', 'approver_id', 'approval_status', 'actioned_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'contract_id'], 'integer'],
             [['approval_status'], 'exist', 'skipOnError' => true, 'targetClass' => ApprovalStatus::class, 'targetAttribute' => ['approval_status' => 'id']],
-            [['approver_id'], 'exist', 'skipOnError' => true, 'targetClass' => WorkflowTemplate::class, 'targetAttribute' => ['approver_id' => 'user_id']],
+            // [['approver_id'], 'exist', 'skipOnError' => true, 'targetClass' => WorkflowTemplate::class, 'targetAttribute' => ['approver_id' => 'user_id']],
             [['contract_id'], 'exist', 'skipOnError' => true, 'targetClass' => Contracts::class, 'targetAttribute' => ['contract_id' => 'id']],
             [['template_id'], 'exist', 'skipOnError' => true, 'targetClass' => WorkflowTemplate::class, 'targetAttribute' => ['template_id' => 'id']],
+            ['sequence', 'integer']
         ];
     }
 
@@ -95,7 +97,7 @@ class WorkflowEntries extends \yii\db\ActiveRecord
      */
     public function getApprover()
     {
-        return $this->hasOne(WorkflowTemplate::class, ['user_id' => 'approver_id']);
+        return $this->hasOne(WorkflowTemplateMembers::class, ['user_id' => 'approver_id']);
     }
 
     /**

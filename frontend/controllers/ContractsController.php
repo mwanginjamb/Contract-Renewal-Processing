@@ -2,8 +2,6 @@
 
 namespace frontend\controllers;
 
-use app\models\WorkflowEntries;
-use app\models\WorkflowTemplate;
 use Yii;
 use yii\web\Controller;
 use app\models\Contracts;
@@ -11,7 +9,10 @@ use yii\filters\VerbFilter;
 use yii\helpers\FileHelper;
 use yii\helpers\ArrayHelper;
 use app\models\DurationUnits;
+use yii\filters\AccessControl;
 use app\models\ContractsSearch;
+use app\models\WorkflowEntries;
+use app\models\WorkflowTemplate;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -33,6 +34,44 @@ class ContractsController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => AccessControl::className(),
+                    'only' => [
+                        'index',
+                        'create',
+                        'update',
+                        'delete',
+                        'view',
+                        'approvals',
+                        'track-approval',
+                        'cancel-approval',
+                        'send-for-approval',
+                        'approve'
+                    ],
+                    'rules' => [
+                        [
+                            'actions' => ['signup'],
+                            'allow' => true,
+                            'roles' => ['?'],
+                        ],
+                        [
+                            'actions' => [
+                                'index',
+                                'create',
+                                'update',
+                                'delete',
+                                'view',
+                                'approvals',
+                                'track-approval',
+                                'cancel-approval',
+                                'send-for-approval',
+                                'approve'
+                            ],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ]
             ]
         );
     }
@@ -56,12 +95,11 @@ class ContractsController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ContractsSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
+        //$searchModel = new ContractsSearch();
+        // $dataProvider = $searchModel->search($this->request->queryParams);
+        $contracts = Contracts::find()->all();
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'contracts' => $contracts
         ]);
     }
 
@@ -236,33 +274,118 @@ class ContractsController extends Controller
     public function actionSendForApproval($id)
     {
         $contractId = $id;
+        $contractModel = $this->findModel($contractId);
         // Use the default/first Workflow Template where workflow_name is not null
         $approvalTemplate = WorkflowTemplate::find()->where(['IS NOT', 'workflow_name', NULL])->orderBy(['id' => SORT_DESC])->one();
         if ($approvalTemplate) {
             // Get WorkflowTemplateMembers for this template
             $members = $approvalTemplate->workflowMembers;
             // if members exist create workflow entries for the subject contract
-            //Yii::$app->utility->printrr($members);
             if ($members) {
                 foreach ($members as $member) {
                     $workflowEntry = new WorkflowEntries();
                     $workflowEntry->template_id = $approvalTemplate->id;
-                    $workflowEntry->approver_id = $member->approver_id;
+                    $workflowEntry->approver_id = $member->user_id;
+                    $workflowEntry->sequence = $member->sequence;
                     $workflowEntry->contract_id = $contractId;
-                    $workflowEntry->approvalStatus = 1;
+                    if ($member->sequence == 1) {
+                        $workflowEntry->approval_status = 1;
+                    } else {
+                        $workflowEntry->approval_status = 4;
+                    }
 
 
+                    //  Yii::$app->utility->printrr($workflowEntry);
                     if ($workflowEntry->save()) {
+                        // Update approval status of the contract model to pending status
+                        $contractModel->approval_status = 1;
+                        $contractModel->save();
                         Yii::$app->session->setFlash('success', 'Contract sent for approval successfully.');
                     } else {
+                        //  Yii::$app->utility->printrr($workflowEntry);
                         Yii::$app->session->setFlash('error', 'Error sending contract for approval.');
                     }
 
                 }
+            } else {
+                Yii::$app->session->setFlash('error', 'Error sending contract for approval: No Workflow Template Members Set.');
+                return $this->redirect(['view', 'id' => $contractId]);
             }
         } else {
             Yii::$app->session->setFlash('error', 'Error sending contract for approval: No Approval Template Set.');
         }
         return $this->redirect(['view', 'id' => $contractId]);
+    }
+
+    public function actionCancelApproval($id)
+    {
+        $contractID = $id;
+        // Delete all approval entries
+        $deleteCount = WorkflowEntries::deleteAll(['contract_id' => $contractID]);
+        if ($deleteCount) {
+            // Update the contract status
+            $contract = $this->findModel($id);
+            $contract->approval_status = NULL;
+            $contract->save();
+            Yii::$app->session->setFlash('success', 'Contract approval request cancelled successfully.');
+        }
+
+        return $this->redirect(['view', 'id' => $id]);
+
+    }
+
+    // Track Approvals by showing related approval entries for a contract
+
+    public function actionTrackApproval($id)
+    {
+        $contractID = $id;
+        $contract = $this->findModel($id);
+        if ($contract) {
+            // Get Approval entries
+            $approvalEntries = $contract->workflowEntries;
+            return $this->render('entries', [
+                'entries' => $approvalEntries
+            ]);
+        }
+        Yii::$app->session->setFlash('error', 'Could not track approval status for subject contract.');
+        return $this->goBack();
+    }
+
+    // Display contract Approval requests for a logged in approver
+    public function actionApprovals()
+    {
+        $approvals = WorkflowEntries::find()->where(['approver_id' => Yii::$app->user->id, 'approval_status' => 1])->all();
+        return $this->render('approvals', [
+            'approvals' => $approvals
+        ]);
+    }
+
+    // Approve a contract and push the workflow to next approver
+
+    public function actionApprove($id)
+    {
+        $approvalEntryID = $id;
+        $entry = WorkflowEntries::find()->where(['id' => $approvalEntryID])->one();
+        $entry->approval_status = 2;
+        if ($entry->save()) {
+            // move to next sequence 
+            $nextSequence = WorkflowEntries::find()->where(['contract_id' => $entry->contract_id])
+                ->andWhere(['>', 'sequence', $entry->sequence])->one();
+            if ($nextSequence) {
+                $nextSequence->approval_status = 1;
+                $nextSequence->save();
+                Yii::$app->session->setFlash('success', 'contract has been approved.');
+                return $this->redirect(['approvals']);
+            } else {
+                // mark contract as fully approved
+                $contract = Contracts::find()->where(['id' => $entry->contract_id])->one();
+                $contract->approval_status = 2;
+                if ($contract->save()) {
+                    Yii::$app->session->setFlash('success', 'contract has been fully signed and approved.');
+                }
+            }
+            return $this->redirect(['approvals']);
+        }
+
     }
 }

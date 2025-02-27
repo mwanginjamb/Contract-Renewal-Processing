@@ -17,24 +17,24 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="my-3 d-flex justify-content-between">
         <div class="actions">
-            <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-            <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+            <?= ($model->approval_status == NULL) ? Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : '' ?>
+            <?= ($model->approval_status == NULL) ? Html::a('Delete', ['delete', 'id' => $model->id], [
                 'class' => 'btn btn-danger',
                 'data' => [
                     'confirm' => 'Are you sure you want to delete this item?',
                     'method' => 'post',
                 ],
-            ]) ?>
+            ]) : '' ?>
 
         </div>
         <div class="approval">
-            <?= Html::a('Send for Approval', ['send-for-approval', 'id' => $model->id], [
+            <?= ($model->approval_status == NULL) ? Html::a('Send for Approval', ['send-for-approval', 'id' => $model->id], [
                 'class' => 'btn btn-warning',
                 'data' => [
-                    'confirm' => 'Are you sure you want to delete this item?',
+                    'confirm' => 'Are you sure you want to send this contract for approval ?',
                     'method' => 'post',
                 ],
-            ]) ?>
+            ]) : '' ?>
         </div>
     </div>
     <div class="row">
@@ -42,24 +42,30 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= DetailView::widget([
                 'model' => $model,
                 'attributes' => [
-                    'id',
+                    //'id',
                     'contract_number',
                     'employee_name',
                     'employee_number',
-                    'original_contract_path',
+                    // 'original_contract_path',
                     [
                         'attribute' => 'duration_unit',
                         'value' => function ($model) {
                             return $model->durationUnit->unit;
                         },
                     ],
-                    'signed_contract_path:ntext',
+                    // 'signed_contract_path:ntext',
                     'contract_duration',
                     'employee_workstation',
                     // 'created_at',
-                    'updated_at:datetime',
+                    // 'updated_at:datetime',
                     // 'created_by',
                     // 'updated_by',
+                    [
+                        'attribute' => 'approval_status',
+                        'value' => function ($model) {
+                            return $model->approvalStatus->name ?? '';
+                        }
+                    ]
                 ],
             ]) ?>
         </div>

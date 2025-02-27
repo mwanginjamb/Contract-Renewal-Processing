@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use app\models\Contracts;
 use common\models\LoginForm;
 use Yii;
 use yii\filters\VerbFilter;
@@ -62,7 +63,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $mycontracts = Contracts::find()->where(['employee_number' => Yii::$app->user->identity->staff_id_number])->orderBy(['id' => SORT_DESC])->all();
+        return $this->render('index', ['contracts' => $mycontracts]);
     }
 
     /**

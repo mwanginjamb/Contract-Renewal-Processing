@@ -15,6 +15,9 @@ class SignupForm extends Model
     public $email;
     public $password;
 
+    public $password_confirm;
+    public $staff_id_number;
+
 
     /**
      * {@inheritdoc}
@@ -33,8 +36,12 @@ class SignupForm extends Model
             ['email', 'string', 'max' => 255],
             ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
 
-            ['password', 'required'],
+            [['password', 'password_confirm'], 'required'],
             ['password', 'string', 'min' => Yii::$app->params['user.passwordMinLength']],
+            ['password_confirm', 'compare', 'compareAttribute' => 'password', 'message' => 'Passwords do not match.'],
+
+            ['staff_id_number', 'string'],
+            ['staff_id_number', 'required'],
         ];
     }
 
@@ -48,10 +55,11 @@ class SignupForm extends Model
         if (!$this->validate()) {
             return null;
         }
-        
+
         $user = new User();
         $user->username = $this->username;
         $user->email = $this->email;
+        $user->staff_id_number = $this->staff_id_number;
         $user->setPassword($this->password);
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();

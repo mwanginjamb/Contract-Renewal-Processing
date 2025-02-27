@@ -8,7 +8,7 @@ $templateMembers = $model->getWorkflowMembers()->all();
         <tr>
             <th>Approver Name</th>
             <th>Approver Email</th>
-            <th>Approver Phone Number</th>
+            <!-- <th>Approver Phone Number</th> -->
             <th>Sequence</th>
         </tr>
     </thead>
@@ -17,7 +17,7 @@ $templateMembers = $model->getWorkflowMembers()->all();
             <tr>
                 <td><?= $templateMember->approver_name ?></td>
                 <td><?= $templateMember->approver_email ?></td>
-                <td><?= $templateMember->approver_phone_number ?></td>
+                <!-- <td><?= $templateMember->approver_phone_number ?></td> -->
                 <td><?= $templateMember->sequence ?></td>
             </tr>
         <?php endforeach; ?>

@@ -23,8 +23,10 @@ use yii\behaviors\TimestampBehavior;
  * @property int|null $created_by
  * @property int|null $updated_by
  * @property int|null $duration_unit
+ * @property int|null $approval_status
  *
  * @property WorkflowEntries[] $workflowEntries
+ * @property ApprovalStatus[] $ApprovalStatus
  */
 class Contracts extends \yii\db\ActiveRecord
 {
@@ -61,7 +63,8 @@ class Contracts extends \yii\db\ActiveRecord
             [['original_contract_path'], 'string', 'max' => 450],
             [['contract_duration'], 'string', 'max' => 255],
             [['employee_workstation'], 'string', 'max' => 250],
-            [['contract_number'], 'unique']
+            [['contract_number'], 'unique'],
+            [['approval_status'], 'integer']
 
         ];
     }
@@ -101,6 +104,11 @@ class Contracts extends \yii\db\ActiveRecord
     public function getDurationUnit()
     {
         return $this->hasOne(DurationUnits::class, ['id' => 'duration_unit']);
+    }
+
+    public function getApprovalStatus()
+    {
+        return $this->hasOne(ApprovalStatus::class, ['id' => 'approval_status']);
     }
 
     /**
