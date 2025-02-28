@@ -2,19 +2,20 @@
 
 namespace frontend\controllers;
 
-use frontend\models\ResendVerificationEmailForm;
-use frontend\models\VerifyEmailForm;
 use Yii;
-use yii\base\InvalidArgumentException;
-use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use app\models\Contracts;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use common\models\LoginForm;
-use frontend\models\PasswordResetRequestForm;
-use frontend\models\ResetPasswordForm;
+use yii\filters\AccessControl;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use frontend\models\VerifyEmailForm;
+use yii\web\BadRequestHttpException;
+use frontend\models\ResetPasswordForm;
+use yii\base\InvalidArgumentException;
+use frontend\models\PasswordResetRequestForm;
+use frontend\models\ResendVerificationEmailForm;
 
 /**
  * Site controller
@@ -75,7 +76,10 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $contracts = Contracts::find()->where(['employee_number' => Yii::$app->user->identity->staff_id_number])->all();
+        return $this->render('index', [
+            'contracts' => $contracts
+        ]);
     }
 
     /**
