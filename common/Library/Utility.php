@@ -167,4 +167,11 @@ class Utility extends Component
         }
         return true;
     }
+    public function createDir($targetPath)
+    {
+        if (!is_dir(dirname($targetPath))) {
+            FileHelper::createDirectory(dirname($targetPath));
+            chmod(dirname($targetPath), 0755);
+        }
+    }
 }

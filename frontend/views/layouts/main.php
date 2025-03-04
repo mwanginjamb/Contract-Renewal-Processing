@@ -279,7 +279,7 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                             <ul class="nav nav-treeview">
 
                                 <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>payperiod"
+                                    <a href="<?= $absoluteUrl ?>workflow-template"
                                         class="nav-link <?= Yii::$app->utility->currentaction('workflow-template', 'index') ? 'active' : '' ?>">
                                         <i class="fa fa-car nav-icon"></i>
                                         <p>Workflow Groups</p>
