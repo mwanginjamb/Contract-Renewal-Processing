@@ -17,6 +17,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1 class="text display-4"><?= Html::encode($this->title) ?></h1>
 
+    <p>
+        <?= Html::a('Add a Contract', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
 
     <table class="table table-bordered" id="table">
         <thead>

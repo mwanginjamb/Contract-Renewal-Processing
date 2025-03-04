@@ -30,7 +30,20 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'signup'],
+                'only' => [
+                    'logout',
+                    'signup',
+                    'index',
+                    'create',
+                    'update',
+                    'delete',
+                    'view',
+                    'approvals',
+                    'track-approval',
+                    'cancel-approval',
+                    'send-for-approval',
+                    'approve'
+                ],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -38,7 +51,19 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => [
+                            'logout',
+                            'index',
+                            'create',
+                            'update',
+                            'delete',
+                            'view',
+                            'approvals',
+                            'track-approval',
+                            'cancel-approval',
+                            'send-for-approval',
+                            'approve'
+                        ],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
