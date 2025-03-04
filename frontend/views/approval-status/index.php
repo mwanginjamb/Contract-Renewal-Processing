@@ -15,34 +15,42 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="approval-status-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a('Create Approval Status', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <div class="card card-info">
+        <div class="card-header">
+            <h4 class="card-title"><?= Html::encode($this->title) ?></h4>
+            <div class="card-tools">
+                <?= Html::a('Create Approval Status', ['create'], ['class' => 'btn btn-success']) ?>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+            </div>
+            <div class="card-body">
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+                <?= GridView::widget([
+                    'dataProvider' => $dataProvider,
+                    'filterModel' => $searchModel,
+                    'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'name',
-            'created_at:datetime',
-            'updated_at:datetime',
-            'created_by',
-            //'updated_by',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, ApprovalStatus $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id' => $model->id]);
-                    }
-            ],
-        ],
-    ]); ?>
+                        'id',
+                        'name',
+                        'created_at:datetime',
+                        'updated_at:datetime',
+                        'created_by',
+                        //'updated_by',
+                        [
+                            'class' => ActionColumn::className(),
+                            'urlCreator' => function ($action, ApprovalStatus $model, $key, $index, $column) {
+                                                return Url::toRoute([$action, 'id' => $model->id]);
+                                            }
+                        ],
+                    ],
+                ]); ?>
+            </div>
+        </div>
+
+    </div>
+
+
 
 
 </div>

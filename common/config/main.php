@@ -17,6 +17,9 @@ return [
         ],
         'sharepoint' => [
             'class' => \common\Library\Sharepoint::class
+        ],
+        'dashboard' => [
+            'class' => \common\Library\DashboardComponent::class
         ]
     ],
 ];

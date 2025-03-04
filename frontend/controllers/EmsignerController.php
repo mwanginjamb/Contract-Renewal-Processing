@@ -172,12 +172,7 @@ class EmsignerController extends Controller
 
     public function read($link)
     {
-        $list = env('SP_LIST');
-        if ($link) {
-            $parts = explode("/", $link);
-            $list = $parts[6];
-        }
-        $result = Yii::$app->recruitment->Read($list, $title);
+        $result = Yii::$app->sharepoint->getBinary($link);
         //returns base64 from sharepoint integration component
         return is_string($result) ? $result : false;
     }

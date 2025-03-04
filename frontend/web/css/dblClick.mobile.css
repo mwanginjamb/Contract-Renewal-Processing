@@ -1,0 +1,10 @@
+/*
+This bit of css helps invalidate the default mobile phone 
+touch behaviour of zooming on touch, in this web app we have implemented dblClick event on various data table
+which by default wouldn't work hence this override on table data cells
+by @francnjamb
+*/
+
+td {
+    touch-action: manipulation;
+}

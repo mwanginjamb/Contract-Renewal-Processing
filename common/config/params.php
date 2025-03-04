@@ -6,4 +6,6 @@ return [
     'senderName' => 'Contract Mailer',
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordMinLength' => 8,
+    'generalTitle' => env('APP_NAME'),
+    'demoCompany' => env('CUSTOMER'),
 ];
