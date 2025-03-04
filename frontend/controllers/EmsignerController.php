@@ -3,10 +3,11 @@
 namespace frontend\controllers;
 
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
+use app\models\Contracts;
 use yii\helpers\FileHelper;
 use yii\filters\AccessControl;
-use yii\helpers\Url;
 
 class EmsignerController extends Controller
 {
@@ -104,7 +105,7 @@ class EmsignerController extends Controller
         return $this->renderAjax('create');
     }
 
-    public function actionDecrypt($reference = false, $sessionRef)
+    public function actionDecrypt($reference, $sessionRef)
     {
 
         $working_session = Yii::$app->session->get('SIGNING_SESSION');
@@ -169,7 +170,7 @@ class EmsignerController extends Controller
     }
 
 
-    public function read($title, $link)
+    public function read($link)
     {
         $list = env('SP_LIST');
         if ($link) {
@@ -181,49 +182,14 @@ class EmsignerController extends Controller
         return is_string($result) ? $result : false;
     }
 
-    public function actionData($path = '')
+    public function actionData()
     {
-        $type = Yii::$app->session->get('Document');
-        if (Yii::$app->session->has('binary')) {
-            // if signed document is not available pull it initially from report codeunit
-            $binary = Yii::$app->session->get('binary');
-            $base64 = $binary;
-            Yii::$app->session->set('signer', 'Initial Signer (Signer one)');
-
-            // use metadata session to check if there is existing signed document
-            $metadata = Yii::$app->session->get('metadata');
-            $service = $metadata['Service'];
-
-            // distinguish between procurement docs and other documents
-            if (in_array($type, Yii::$app->params['attachmentSignage'])) {
-                $filter = [
-                    'Attachment_No' => $metadata['Application'],
-                    'Doc_No' => Yii::$app->session->get('metadata')['Doc_No'],
-                ];
-            } elseif ($type == 'Salary_Voucher') {
-                $filter = [
-                    'No' => $metadata['Application']
-                ];
-            } else {
-
-                $filter = [
-                    'Code' => $metadata['Application']
-                ];
-            }
-            $document = Yii::$app->navhelper->findOne($service, $filter);
-            if (is_object($document) && property_exists($document, 'Signed_Document') && $document->Signed_Document) {
-                Yii::$app->session->set('signer', 'Cosigner (Other Signer)');
-                $base64 = $this->read(basename($document->Signed_Document), $document->Signed_Document);
-            }
-        } else {
-            Yii::$app->session->set('signer', 'Default Path... Demo Mode!');
-            $binary = file_get_contents($path);
-            $base64 = base64_encode($binary);
-        }
+        $path = Yii::$app->session->get('metadata')['path'];
+        $base64 = Yii::$app->sharepoint->getBinary($path);
         $AuthToken = env('ESIGNATURE_TOKEN');
         $data = [
             "SignerID" => Yii::$app->user->id,
-            "Name" => Yii::$app->user->identity->{'Employee Name'},
+            "Name" => Yii::$app->user->identity->username,
             "FileType" => "PDF",
             "SignatureType" => 2,
             "SelectPage" => "PAGE LEVEL",
@@ -261,21 +227,15 @@ class EmsignerController extends Controller
         Yii::$app->utility->logResult($json, $name);
 
         // Incorporate document no on logs names
-        $type = Yii::$app->session->get('Document');
-        $metadata = Yii::$app->session->get('metadata');
-        $No = null;
-        if (in_array($type, Yii::$app->params['attachmentSignage'])) {
-            $No = Yii::$app->session->get('metadata')['Doc_No'];
-        } else {
-            $No = $metadata['Application'];
-        }
 
+        $metadata = Yii::$app->session->get('metadata');
+        $No = $metadata['Application'];
         $No = str_replace('/', '', $No);
         //remove colons
         $document = str_replace(':', '', $No);
         $label = str_replace('_', '', $document);
 
-        Yii::$app->utility->logResult($json, Yii::$app->user->identity->{'Employee No_'} . ' - ' . $label . ' - ' . $name);
+        Yii::$app->utility->logResult($json, Yii::$app->user->identity->staff_id_number . ' - ' . $label . ' - ' . $name);
         return $json;
     }
 
@@ -290,7 +250,7 @@ class EmsignerController extends Controller
         $type = Yii::$app->session->get('Document');
 
         //$sessionsLog = print_r($_SESSION, TRUE);
-        Yii::$app->utility->log($post, Yii::$app->user->identity->{'Employee No_'} . ' - ' . 'Signature Response Payload -' . $sessionRef);
+        Yii::$app->utility->log($post, Yii::$app->user->identity->staff_id_number . ' - ' . 'Signature Response Payload -' . $sessionRef);
 
         try {
             if ($post['ReturnStatus'] == 'Success') {
@@ -305,93 +265,44 @@ class EmsignerController extends Controller
                 fclose($fh);
 
                 $decrypt = $this->actionDecrypt($reference, $sessionRef);
-                Yii::$app->utility->log($decrypt, Yii::$app->user->identity->{'Employee No_'} . ' - ' . 'decryption result - ' . $reference);
+                Yii::$app->utility->log($decrypt, Yii::$app->user->identity->staff_id_number . ' - ' . 'decryption result - ' . $reference);
 
 
                 // get decrypted data
                 $signedDataFolder = "./data/" . $sessionRef . "/";
                 $decryptedDataFile = $signedDataFolder . 'Decrypted_Signed_Data.txt';
                 $signedContent = file_get_contents($decryptedDataFile);
-                Yii::$app->utility->logResult($post, Yii::$app->user->identity->{'Employee No_'} . ' -' . 'decryption-content-' . $reference);
+                Yii::$app->utility->logResult($post, Yii::$app->user->identity->staff_id_number . ' -' . 'decryption-content-' . $reference);
 
                 // send the signed file to sharepoint
-                if (Yii::$app->session->has('metadata') && !in_array($type, Yii::$app->params['attachmentSignage'])) {
-                    $fileName = 'signed-' . Yii::$app->session->get('metadata')['Application'] . '-' . $sessionRef . '.pdf';
-                    // remove any forward slash
-                    $fileName = str_replace('/', '', $fileName);
-                    //remove colons
-                    $fileName = str_replace(':', '', $fileName);
 
-                    $binary = base64_decode($signedContent);
-                    $spResult = Yii::$app->recruitment->attach_binary($binary, Yii::$app->params['sp']['Signed'], $fileName);
-                    //Yii::$app->utility->printrr($spResult);
+                $fileName = 'signed-' . Yii::$app->session->get('metadata')['title'] . '-' . $sessionRef . '.pdf';
+                // remove any forward slash
+                $fileName = str_replace('/', '', $fileName);
+                //remove colons
+                $fileName = str_replace(':', '', $fileName);
+                $fileName = mb_strimwidth($fileName, 0, 75, '');
 
-                    // Update subject Page on NAV
-                    $service = Yii::$app->session->get('metadata')['Service'];
-                    $filter = [
-                        'Code' => Yii::$app->session->get('metadata')['Application']
-                    ];
+                $binary = $signedContent;
+                $parentDocumentNo = Yii::$app->session->get('metadata')['Application'];
+                $attachmentName = $fileName;
+                $spResult = Yii::$app->sharepoint->attach_toLibrary(env('SP_LIBRARY') . '\\' . $parentDocumentNo, $binary, $attachmentName, $metadata = [], TRUE);
+                //Yii::$app->utility->printrr($spResult);
 
-                    if ($type == 'Salary_Voucher') {
-                        $filter = [
-                            'No' => Yii::$app->session->get('metadata')['Application']
-                        ];
-                    }
-                    $document = Yii::$app->navhelper->findOne($service, $filter);
-                    if (is_object($document)) {
-                        // Update the Signed Document Path
-                        $data = [
-                            'Signed_Document' => $spResult,
-                            'Key' => $document->Key
-                        ];
-
-                        $result = Yii::$app->navhelper->updateData($service, $data);
-                        Yii::$app->utility->logResult($result, Yii::$app->user->identity->{'Employee No_'}, ' - ' . 'ERP-UPDATE ' . $reference);
-                        $this->acknowledge($document);
-                        //Yii::$app->utility->printrr($result);
-                    } else {
-                        Yii::$app->utility->printrr($document);
-                    }
-                } else { // other none procurement attachments
-                    $fileName = 'signed-' . Yii::$app->session->get('metadata')['title'] . '-' . $sessionRef . '.pdf';
-                    // remove any forward slash
-                    $fileName = str_replace('/', '', $fileName);
-                    //remove colons
-                    $fileName = str_replace(':', '', $fileName);
-
-                    $binary = base64_decode($signedContent);
-                    $spResult = Yii::$app->recruitment->attach_binary($binary, Yii::$app->params['sp']['Signed'], $fileName);
-                    //Yii::$app->utility->printrr($spResult);
-
-                    // Update subject Page on NAV
-                    $service = Yii::$app->session->get('metadata')['Service'];
-                    $filter = [
-                        'Attachment_No' => Yii::$app->session->get('metadata')['Application'],
-                        'Doc_No' => Yii::$app->session->get('metadata')['Doc_No'],
-                    ];
-                    $document = Yii::$app->navhelper->findOne($service, $filter);
-                    if (is_object($document)) {
-                        // Update the Signed Document Path
-                        $data = [
-                            'Document_Link' => $spResult,
-                            'Key' => $document->Key
-                        ];
-
-                        $update = Yii::$app->navhelper->updateData($service, $data);
-                        if (is_object($update)) {
-                            Yii::$app->session->setFlash('success', 'Document Signed Successfully.');
-                        }
-
-                        Yii::$app->utility->logResult($result, Yii::$app->user->identity->{'Employee No_'} . ' - ' . 'ERP-UPDATE-non-proc ' . $reference);
-                        //Yii::$app->utility->printrr($result);
-                    } else {
-                        Yii::$app->utility->printrr($document);
-                    }
+                // Update signed path on contracts table
+                $contract = Contracts::findOne(Yii::$app->session->get('metadata')['Application']);
+                $contract->signed_contract_path = $spResult;
+                if ($contract->save()) {
+                    Yii::$app->session->setFlash('success', 'Document signed successfully. You can now proceed and send it to next approver.');
                 }
+
+
+
+
             } // end success block
 
         } catch (\Exception $e) {
-            Yii::$app->utility->logResult($post, Yii::$app->user->identity->{'Employee No_'} . ' - ' . 'Emudhra-Exception');
+            Yii::$app->utility->logResult($post, Yii::$app->user->identity->staff_id_number . ' - ' . 'Emudhra-Exception');
             Yii::$app->session->setFlash('error', 'Signature Session expired. Login again and attempt signing again.');
             return $this->redirect(['./site/index']);
             //echo $e->getMessage();
@@ -428,7 +339,7 @@ class EmsignerController extends Controller
             }
             $quoteNo = $document->Quote_No;
             $Committee_Type = $committee;
-            $Committte_No = Yii::$app->user->identity->{'Employee No_'};
+            $Committte_No = Yii::$app->user->identity->staff_id_number;
 
             $params = [
                 'Quote_No' => $quoteNo,

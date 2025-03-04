@@ -388,4 +388,29 @@ class ContractsController extends Controller
         }
 
     }
+
+    public function actionSign($id)
+    {
+        $contract = $this->findModel($id);
+        $No = $contract->contract_number;
+        $link = $contract->signed_contract_path ? $contract->signed_contract_path : $contract->original_contract_path;
+        $title = basename($link);
+        //sharepoint metadata
+        $metadata = [
+            'Application' => $No ?? '', // contract number
+            'title' => $title,
+            'path' => $link
+        ];
+        Yii::$app->session->set('metadata', $metadata);
+        //Yii::$app->utility->printrr(Yii::$app->utility->isValidSharepointLink($link));
+        // check validity of initial document
+        if (Yii::$app->utility->isValidSharepointLink($link)) {
+            $reference = $No . '_' . Yii::$app->security->generateRandomString(5);
+            Yii::$app->session->set('reference', $reference);
+            return $this->redirect(['./emsigner', 'metadata' => $metadata, 'reference' => $reference]);
+        } else {
+            Yii::$app->session->setFlash('error', 'The original contract document is not valid. Please contact the system administrator.. ');
+            return $this->redirect(['view', 'id' => $No]);
+        }
+    }
 }

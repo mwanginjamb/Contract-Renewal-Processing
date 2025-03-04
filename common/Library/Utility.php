@@ -2,8 +2,9 @@
 
 namespace common\Library;
 
-use yii\base\Component;
 use Yii;
+use yii\base\Component;
+use yii\helpers\FileHelper;
 
 class Utility extends Component
 {
@@ -106,10 +107,15 @@ class Utility extends Component
         } else {
             $filename = 'log/signature.log';
         }
+
+        if (!is_dir($filename)) {
+            FileHelper::createDirectory($filename, 0755, true);
+        }
         $req_dump = print_r($message, TRUE);
-        $fp = fopen($filename, 'a');
-        fwrite($fp, $req_dump);
-        fclose($fp);
+        if ($fp = @fopen($filename, 'a')) {
+            fwrite($fp, $req_dump);
+            fclose($fp);
+        }
     }
 
     public function logResult($message, $name = null)
@@ -121,9 +127,44 @@ class Utility extends Component
         } else {
             $filename = 'log/result.log';
         }
+
+        if (!is_dir($filename)) {
+            FileHelper::createDirectory($filename, 0755, true);
+        }
         $req_dump = print_r($message, TRUE);
-        $fp = fopen($filename, 'a');
-        fwrite($fp, $req_dump);
-        fclose($fp);
+        if ($fp = @fopen($filename, 'a')) {
+            fwrite($fp, $req_dump);
+            fclose($fp);
+        }
+    }
+
+    /**
+     * Summary of validateSharepoint
+     * @param mixed $link
+     * @throws \yii\web\BadRequestHttpException
+     * @return bool
+     * This function is used to validate sharepoint link and throw exception for an invalid case
+     */
+    public function validateSharepoint($link)
+    {
+        if (strpos($link, 'sharepoint.com') === false) {
+            throw new \yii\web\BadRequestHttpException('Invalid SharePoint link (' . $link . '). Re-attach Properly or Seek guidance from ICT Support.');
+        }
+        return true;
+    }
+
+    /**
+     * Summary of isValidSharepointLink
+     * @param mixed $link
+     * @return bool
+     * This function is used to validate sharepoint link and return false for an invalid case, it will allow for operations to continue
+     * for an invalid case
+     */
+    public function isValidSharepointLink($link)
+    {
+        if (strpos($link, 'sharepoint.com') === false) {
+            return false;
+        }
+        return true;
     }
 }
