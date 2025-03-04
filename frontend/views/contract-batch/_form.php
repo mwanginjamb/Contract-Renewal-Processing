@@ -12,7 +12,9 @@ use yii\bootstrap5\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'batch_description')->textarea(['rows' => 6]) ?>
+    <?php $form->errorSummary($model); ?>
+
+    <?= $form->field($model, 'batch_description')->textInput(['placeholder' => 'Batch Description']) ?>
 
     <?php $form->field($model, 'created_at')->textInput() ?>
 
