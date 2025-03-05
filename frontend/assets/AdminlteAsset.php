@@ -46,7 +46,7 @@ class AdminlteAsset extends AssetBundle
     ];
     public $js = [
 
-        'plugins/jquery/jquery.min.js',
+        // 'plugins/jquery/jquery.min.js',
         'plugins/bootstrap/js/bootstrap.bundle.min.js',
         'plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js',
         'dist/js/adminlte.min.js',
@@ -79,17 +79,16 @@ class AdminlteAsset extends AssetBundle
         'https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js',
         'https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js ',
         // 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min.js',
-        'js/custom.js',
-        'js/app.js',
+        // 'js/app.js',
         'https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js',
         'https://cdn.jsdelivr.net/npm/sweetalert2@9', //Sweet Alert
-        //'https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.js',
+        'Js/custom.js',
+        'Js/modal.js',
 
 
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        //'yii\bootstrap\BootstrapAsset',
         'yii\bootstrap5\BootstrapAsset',
     ];
 }

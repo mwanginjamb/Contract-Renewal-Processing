@@ -35,7 +35,7 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 
 
     <!-- PWA SHIT -->
-    <link rel="manifest" href="/manifest.json">
+    <!-- <link rel="manifest" href="/manifest.json"> -->
     <meta name="theme-color" content="#134474">
     <link rel="apple-touch-icon" href="/images/manifest/96.png" />
     <meta name="apple-mobile-web-app-status-bar" content="#01A54F">
@@ -292,6 +292,15 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                                         <p>Workflow Groups</p>
                                     </a>
                                 </li>
+
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>approval-status"
+                                        class="nav-link <?= Yii::$app->utility->currentaction('approval-status', 'index') ? 'active' : '' ?>">
+                                        <i class="fa fa-car nav-icon"></i>
+                                        <p>Approval Statuses</p>
+                                    </a>
+                                </li>
+
                             </ul>
                         </li>
                     </ul>

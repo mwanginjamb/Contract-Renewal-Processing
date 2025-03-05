@@ -23,32 +23,33 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::a('Create Approval Status', ['create'], ['class' => 'btn btn-success']) ?>
 
             </div>
-            <div class="card-body">
-
-                <?= GridView::widget([
-                    'dataProvider' => $dataProvider,
-                    'filterModel' => $searchModel,
-                    'columns' => [
-                        ['class' => 'yii\grid\SerialColumn'],
-
-                        'id',
-                        'name',
-                        'created_at:datetime',
-                        'updated_at:datetime',
-                        'created_by',
-                        //'updated_by',
-                        [
-                            'class' => ActionColumn::className(),
-                            'urlCreator' => function ($action, ApprovalStatus $model, $key, $index, $column) {
-                                                return Url::toRoute([$action, 'id' => $model->id]);
-                                            }
-                        ],
-                    ],
-                ]); ?>
-            </div>
         </div>
+        <div class="card-body">
 
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+
+                    //'id',
+                    'name',
+                    'created_at:datetime',
+                    'updated_at:datetime',
+                    'created_by',
+                    //'updated_by',
+                    [
+                        'class' => ActionColumn::className(),
+                        'urlCreator' => function ($action, ApprovalStatus $model, $key, $index, $column) {
+                                        return Url::toRoute([$action, 'id' => $model->id]);
+                                    }
+                    ],
+                ],
+            ]); ?>
+        </div>
     </div>
+
+</div>
 
 
 

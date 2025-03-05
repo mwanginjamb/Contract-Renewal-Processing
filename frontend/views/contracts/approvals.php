@@ -18,6 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     <div class="card card-info">
+
+
         <div class="card-header">
             <h4 class="card-title"><?= Html::encode($this->title) ?></h4>
         </div>

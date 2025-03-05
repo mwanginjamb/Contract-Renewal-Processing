@@ -292,9 +292,9 @@ class ContractsController extends Controller
                     $workflowEntry->sequence = $member->sequence;
                     $workflowEntry->contract_id = $contractId;
                     if ($member->sequence == 1) {
-                        $workflowEntry->approval_status = 1;
+                        $workflowEntry->approval_status = 1; // Pending
                     } else {
-                        $workflowEntry->approval_status = 4;
+                        $workflowEntry->approval_status = 4; // created
                     }
 
 

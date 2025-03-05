@@ -15,41 +15,51 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="contracts-index">
 
-    <h1 class="text display-4"><?= Html::encode($this->title) ?></h1>
-
-
-    <table class="table table-bordered" id="table">
-        <thead>
-            <tr>
-                <td class="fw-bold">Contract</td>
-                <td class="fw-bold">Approver</td>
-                <td class="fw-bold">Approval Status</td>
-                <td class="fw-bold">Sequence</td>
-
-            </tr>
-        </thead>
-        <tbody>
-            <?php if ($entries && is_array($entries)): ?>
-                <?php foreach ($entries as $c): ?>
-
-
+    <div class="card card-info">
+        <div class="card-header">
+            <h3 class="card-title">
+                <?= Html::encode($this->title) ?>
+            </h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered" id="table">
+                <thead>
                     <tr>
-                        <td><?= $c->contract->contract_number ?? '' ?></td>
-                        <td><?= $c->approver->approver_name ?? '' ?></td>
-                        <td><?= $c->approvalStatus->name ?? '' ?></td>
-                        <td><?= $c->approver->sequence ?? '' ?></td>
+                        <td class="fw-bold">Contract</td>
+                        <td class="fw-bold">Approver</td>
+                        <td class="fw-bold">Approval Status</td>
+                        <td class="fw-bold">Sequence</td>
 
                     </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="8">
-                        <div class="alert" alert-info>No Approval Entries for this Record</div>
-                    </td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+                </thead>
+                <tbody>
+                    <?php if ($entries && is_array($entries)): ?>
+                        <?php foreach ($entries as $c): ?>
+
+
+                            <tr>
+                                <td><?= $c->contract->contract_number ?? '' ?></td>
+                                <td><?= $c->approver->approver_name ?? '' ?></td>
+                                <td><?= $c->approvalStatus->name ?? '' ?></td>
+                                <td><?= $c->approver->sequence ?? '' ?></td>
+
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="8">
+                                <div class="alert" alert-info>No Approval Entries for this Record</div>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+
 
 </div>
 
