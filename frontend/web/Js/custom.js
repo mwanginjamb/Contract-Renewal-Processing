@@ -490,7 +490,7 @@ function uploadIndicator(fieldParentNode, textContent = false) {
 
 function removeUploadIndicator() {
     let span = document.querySelector('.upload-indicator');
-    span.remove();
+    if (span) span.remove();
 }
 
 
@@ -567,10 +567,10 @@ async function globalUpload(attachmentService = false, entity, fieldName, docume
         console.log(`File Upload Request`);
         console.log(Response);
         if (Response.status === 'success') {
-            notifySuccess(formField, 'File uploaded successfully');
+            uploadIndicator(formField, 'Contract File uploaded successfully');
             setTimeout(() => {  // clean up the notification elements after 3 seconds
                 removeUploadIndicator();
-                location.reload(true);
+                location.reload();
             }, 3000);
         }
 

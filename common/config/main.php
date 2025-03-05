@@ -20,6 +20,9 @@ return [
         ],
         'dashboard' => [
             'class' => \common\Library\DashboardComponent::class
-        ]
+        ],
+        'assetManager' => [
+            'appendTimestamp' => true
+        ],
     ],
 ];

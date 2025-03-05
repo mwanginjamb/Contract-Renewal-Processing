@@ -109,10 +109,11 @@ class Utility extends Component
         }
 
         if (!is_dir($filename)) {
-            FileHelper::createDirectory($filename, 0755, true);
+            FileHelper::createDirectory(dirname($filename));
+            chmod(dirname($filename), 0755);
         }
         $req_dump = print_r($message, TRUE);
-        if ($fp = @fopen($filename, 'a')) {
+        if ($fp = fopen($filename, 'a')) {
             fwrite($fp, $req_dump);
             fclose($fp);
         }
@@ -129,10 +130,11 @@ class Utility extends Component
         }
 
         if (!is_dir($filename)) {
-            FileHelper::createDirectory($filename, 0755, true);
+            FileHelper::createDirectory(dirname($filename));
+            chmod(dirname($filename), 0755);
         }
         $req_dump = print_r($message, TRUE);
-        if ($fp = @fopen($filename, 'a')) {
+        if ($fp = fopen($filename, 'a')) {
             fwrite($fp, $req_dump);
             fclose($fp);
         }
