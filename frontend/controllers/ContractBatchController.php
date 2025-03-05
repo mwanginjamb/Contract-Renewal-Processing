@@ -2,14 +2,19 @@
 
 namespace frontend\controllers;
 
+use app\models\Contracts;
+use app\models\DurationUnits;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use app\models\ContractBatch;
 use common\models\ExcelImport;
 use yii\web\NotFoundHttpException;
 use app\models\ContractBatchSearch;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * ContractBatchController implements the CRUD actions for ContractBatch model.
@@ -59,8 +64,10 @@ class ContractBatchController extends Controller
      */
     public function actionView($id)
     {
+        $lineContracts = Contracts::find()->where(['contract_batch_id' => $id])->all();
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'contracts' => $lineContracts
         ]);
     }
 
@@ -136,6 +143,13 @@ class ContractBatchController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
+    public function durationId($unit)
+    {
+        $unit = ucwords($unit);
+        $result = DurationUnits::find()->select('id')->where(['unit' => $unit])->one();
+        return $result->id ?? 0;
+    }
+
     /** Excel import functions */
 
     public function actionExcelImport($batch)
@@ -174,8 +188,8 @@ class ContractBatchController extends Controller
 
     private function saveData($sheetData, $batch)
     {
-
-        $existingUnits = ArrayHelper::index(Unit::find()->select(['id'])->where(['batch' => $batch])->AsArray()->all(), 'id');
+        // Yii::$app->utility->printrr($sheetData);
+        $existingUnits = ArrayHelper::index(Contracts::find()->select(['contract_number'])->where(['contract_batch_id' => $batch])->AsArray()->all(), 'contract_number');
         $existing = array_unique(array_keys($existingUnits));
 
         $rowOffset = 1;
@@ -184,12 +198,13 @@ class ContractBatchController extends Controller
             return !in_array($item['A'], $existing) && !is_null($item['A']);
         });
 
-        // Check for property consistency
+        // Check for batch number consistency
         if ($batch !== $filteredArray[1]['B']) {
-            Yii::$app->session->setFlash('error', 'Your template property id is not consistent with that of property (' . $batch . ')  whose units you are importing.');
-            return $this->redirect(Url::toRoute(['property/view', 'id' => $batch]));
+            Yii::$app->session->setFlash('error', 'Your template Batch ID is not consistent with that of Batch No. (' . $batch . ')  whose contract batches you are importing.');
+            return $this->redirect(Url::toRoute(['contract-batch/view', 'id' => $batch]));
         }
 
+        $contractees = [];
         foreach ($filteredArray as $key => $data) {
             // Read from 3rd row
             if ($key > 3) {
@@ -198,44 +213,47 @@ class ContractBatchController extends Controller
                     /**
                      * Save the units
                      */
-                    $model = new Unit();
-                    $model->unit_name = $data['A'] ?? '';
-                    $model->batch = $filteredArray[1]['B'];
+                    $contractees[] = [
+                        'contract_batch_id' => $filteredArray[1]['B'],
+                        'contract_number' => $data['A'],
+                        'employee_name' => $data['B'],
+                        'employee_number' => $data['C'],
+                        'duration_unit' => $this->durationId($data['D']),
+                        'contract_duration' => $data['E'],
+                        'employee_workstation' => $data['F'],
+                    ];
 
-
-                    if (!$model->save()) {
-                        foreach ($model->errors as $k => $v) {
-                            Yii::error('Unit Commit error: ' . $v[0] . ' <b>Got value</b>: <i><u>' . $model->$k . '</u> <b>for Unit:' . $data['A'] . '</b> - On Row:</b>  ' . ($key - $rowOffset) . '  ' . $data['A'], 'dbinfo');
-                            Yii::$app->session->setFlash('error', $v[0] . ' <b>Got value</b>: <i><u>' . $model->$k . '</u> <b>for Unit:' . $data['C'] . '</b> - On Row:</b>  ' . ($key - $rowOffset) . '  ' . $data['A']);
-                        }
-                    } else {
-                        // Save tenants
-                        $tenant = new Tenant();
-                        $tenant->principle_tenant_name = $data['B'] ?? '';
-                        $tenant->billing_email_address = str_replace(' ', '', $data['C']) ?? '';
-                        $tenant->agreed_rent_payable = $data['D'] ?? 0;
-                        $tenant->agreed_water_rate = $data['E'] ?? 0;
-                        $tenant->service_charge = $data['F'] ?? 0;
-                        $tenant->house_number = $model->id;
-                        $tenant->cell_number = $data['G'] ?? '';
-                        if (!$tenant->save()) {
-                            foreach ($tenant->errors as $k => $v) {
-                                Yii::error('Tenant saving error: ' . $v[0] . ' <b>Got value</b>: <i><u>' . $tenant->$k . '</u>', 'dbinfo');
-                            }
-                        } else {
-                            Yii::info('Imported tenant' . VarDumper::dumpAsString($tenant), 'dbinfo');
-                        }
-                        Yii::$app->session->setFlash('success', 'Congratulations, all valid records are completely imported into the system.');
-                    }
                 }
             }
+
+        }
+
+        // Do a batch insert
+        $insert = 0;
+        if (count($contractees)) {
+            $insert = Yii::$app->db->createCommand()->batchInsert(
+                Contracts::tableName(),
+                [
+                    'contract_batch_id',
+                    'contract_number',
+                    'employee_name',
+                    'employee_number',
+                    'duration_unit',
+                    'contract_duration',
+                    'employee_workstation'
+                ],
+                $contractees
+            )->execute();
+            Yii::$app->session->setFlash('success', $insert . '-  contracts have been imported successfully. ');
+        } else {
             if (count($existing)) {
                 Yii::$app->session->setFlash('error', count($existing) . ' duplication conflicts were found on your import.');
             }
         }
 
 
-        return $this->redirect(Url::toRoute(['property/view', 'id' => $model->batch]));
+
+        return $this->redirect(Url::toRoute(['view', 'id' => $batch]));
     }
     public function actionDownload($templateName)
     {

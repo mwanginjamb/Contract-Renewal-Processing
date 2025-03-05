@@ -24,6 +24,7 @@ use yii\behaviors\TimestampBehavior;
  * @property int|null $updated_by
  * @property int|null $duration_unit
  * @property int|null $approval_status
+ * @property int|null $contract_batch_id
  *
  * @property WorkflowEntries[] $workflowEntries
  * @property ApprovalStatus[] $ApprovalStatus
@@ -53,7 +54,7 @@ class Contracts extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            //[['contract_number', 'employee_number', 'original_contract_path', 'contract_duration', 'duration_unit'], 'required'],
+            [['contract_number', 'employee_number', 'contract_duration', 'duration_unit', 'employee_workstation'], 'required'],
             [['contract_number', 'employee_name', 'employee_number', 'original_contract_path', 'signed_contract_path', 'contract_duration', 'employee_workstation', 'created_at', 'updated_at', 'created_by', 'updated_by', 'duration_unit'], 'default', 'value' => null],
             [['signed_contract_path'], 'string'],
             [['created_at', 'updated_at', 'created_by', 'updated_by', 'duration_unit'], 'integer'],
@@ -64,7 +65,8 @@ class Contracts extends \yii\db\ActiveRecord
             [['contract_duration'], 'string', 'max' => 255],
             [['employee_workstation'], 'string', 'max' => 250],
             [['contract_number'], 'unique'],
-            [['approval_status'], 'integer']
+            [['approval_status'], 'integer'],
+            ['contract_batch_id', 'required']
 
         ];
     }

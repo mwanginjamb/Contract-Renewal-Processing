@@ -32,6 +32,7 @@ use yii\bootstrap5\ActiveForm;
                 </div>
                 <div class="col-md-6">
                     <?= (!$model->isNewRecord) ? $form->field($model, 'attachment')->fileInput(['maxlength' => true]) : '' ?>
+                    <?= ($model->isNewRecord) ? $form->field($model, 'contract_batch_id')->dropDownList($batches, ['prompt' => 'Select ...']) : '' ?>
                 </div>
             </div>
 

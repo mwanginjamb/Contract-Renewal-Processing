@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use app\models\ContractBatch;
 use Yii;
 use yii\web\Controller;
 use app\models\Contracts;
@@ -134,12 +135,14 @@ class ContractsController extends Controller
         } else {
             $model->loadDefaultValues();
         }
-        $durationUnits = ArrayHelper::map(DurationUnits::find()->all(), 'id', 'unit'); // DurationUnits::find()->all()
+        $durationUnits = ArrayHelper::map(DurationUnits::find()->all(), 'id', 'unit');
+        $batches = ArrayHelper::map(ContractBatch::find()->all(), 'id', 'batch_description');
 
         return $this->render('create', [
             'model' => $model,
             'durationUnits' => $durationUnits,
-            'content' => $model->original_contract_path ? Yii::$app->sharepoint->getBinary($model->original_contract_path) : NULL
+            'content' => $model->original_contract_path ? Yii::$app->sharepoint->getBinary($model->original_contract_path) : NULL,
+            'batches' => $batches,
         ]);
     }
 

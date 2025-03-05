@@ -252,10 +252,17 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>contract-batch"
+                                        class="nav-link <?= Yii::$app->utility->currentaction('contracts', 'index') ? 'active' : '' ?>">
+                                        <i class="fa fa-door-open nav-icon"></i>
+                                        <p>Contract Batches List</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="<?= $absoluteUrl ?>contracts"
                                         class="nav-link <?= Yii::$app->utility->currentaction('contracts', 'index') ? 'active' : '' ?>">
                                         <i class="fa fa-door-open nav-icon"></i>
-                                        <p>List</p>
+                                        <p>Contracts List</p>
                                     </a>
                                 </li>
 
