@@ -44,3 +44,5 @@ phpunit.phar
 
 *.txt
 *.log
+.env
+*.env

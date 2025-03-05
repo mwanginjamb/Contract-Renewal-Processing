@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>Please fill out the following fields to signup:</p>
 
     <div class="row">
-        <div class="col-lg-5">
+        <div class="col-lg-8">
             <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
             <?php $form->errorSummary($model) ?>
@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <div class="form-group">
                 <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+                <?= Html::a('Login', ['site/login'], ['class' => 'btn btn-outline-info', 'name' => 'signup-button']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>

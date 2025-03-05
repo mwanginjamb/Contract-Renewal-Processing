@@ -242,7 +242,7 @@ class EmsignerController extends Controller
         //$jsonParams = json_decode($data);
         $post = Yii::$app->request->post();
         $sessionRef = Yii::$app->session->get('reference');
-        $type = Yii::$app->session->get('Document');
+
 
         //$sessionsLog = print_r($_SESSION, TRUE);
         Yii::$app->utility->log($post, Yii::$app->user->identity->staff_id_number . ' - ' . 'Signature Response Payload -' . $sessionRef);
