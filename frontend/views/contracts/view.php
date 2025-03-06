@@ -81,17 +81,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]) ?>
                 </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <div class="m-3">
-                        <?php if (!$model->original_contract_path)
-                            echo 'Original Contract not uploaded yet.';
-                        else
-                            print '<iframe src="data:application/pdf;base64,' . $content . '" height="950px" width="100%"></iframe>';
-                        ?>
-                    </div>
-                </div>
-            </div>
+            <?= (!$model->signed_contract_path && $model->original_contract_path) ? $this->render('_original_contract', [
+                'model' => $model,
+                'content' => $content
+            ]) :
+                $this->render('_both_contracts', [
+                    'model' => $model,
+                    'content' => $content,
+                    'signed_content' => $signed_content
+                ])
+                ?>
 
         </div>
     </div>
