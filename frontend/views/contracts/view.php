@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'title' => 'Track contract signing status',
                         ]
                     ) : '' ?>
-                    <?= ($model->approval_status !== NULL) ? Html::a(
+                    <?= ($model->ismycontract($model->id) || $model->icansign($model->id)) ? Html::a(
                         '<i class="fas fa-signature"></i>Sign Contract',
                         ['sign', 'id' => $model->id],
                         [

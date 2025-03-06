@@ -122,4 +122,28 @@ class Contracts extends \yii\db\ActiveRecord
         return new \app\models\query\ContractsQuery(get_called_class());
     }
 
+    public function ismycontract($contractID)
+    {
+        /**
+         * Check if the logged in user is the owner of the contract
+         */
+        $contract = self::find()->where(['id' => $contractID, 'approval_status' => NULL])->andWhere(['employee_number' => Yii::$app->user->identity->staff_id_number])->one();
+        return $contract ? true : false;
+    }
+
+    public function icansign($contractID)
+    {
+        /**
+         * Check if the logged in user can sign the contract and is in the workflow
+         */
+        $contract = self::findOne($contractID);
+        if ($contract) {
+            $approverID = Yii::$app->user->id;
+            $approvalEntry = WorkflowEntries::find()->where(['contract_id' => $contract->id, 'approval_status' => 1])->andWhere(['approver_id' => $approverID])->one();
+            return $approvalEntry ? true : false;
+        }
+        return false;
+    }
+
+
 }
