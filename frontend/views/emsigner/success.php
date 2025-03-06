@@ -16,19 +16,7 @@ use yii\web\View;
 $this->title = 'Gateway Success';
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => '#'];
 ?>
-<?php
-if (Yii::$app->session->hasFlash('success')) {
-    print ' <div class="alert alert-success alert-dismissable">
-                                 ';
-    echo Yii::$app->session->getFlash('success');
-    print '</div>';
-} else if (Yii::$app->session->hasFlash('error')) {
-    print ' <div class="alert alert-danger alert-dismissable">
-                                 ';
-    echo Yii::$app->session->getFlash('error');
-    print '</div>';
-}
-?>
+
 <div class="row">
     <div class="col">
         <?= $this->render('_actions'); ?>

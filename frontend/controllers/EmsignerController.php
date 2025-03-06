@@ -8,6 +8,7 @@ use yii\web\Controller;
 use app\models\Contracts;
 use yii\helpers\FileHelper;
 use yii\filters\AccessControl;
+use app\models\WorkflowEntries;
 
 class EmsignerController extends Controller
 {
@@ -308,7 +309,8 @@ class EmsignerController extends Controller
             'data' => [], // $jsonParams,
             'post' => $post,
             'sessionRef' => $sessionRef,
-            'content' => $signedContent
+            'content' => $signedContent,
+
         ]);
     }
 
@@ -380,65 +382,43 @@ class EmsignerController extends Controller
         ]);
     }
 
-    public function actionApproveRequest($app, $empNo, $docType = "")
+    public function actionApproveRequest($contractNumber)
     {
-        $service = Yii::$app->params['ServiceName']['HRPortal'];
-
-        $data = [
-            'docNo' => $app,
-            'approverNo' => $empNo
-        ];
-
-        $result = Yii::$app->navhelper->codeunit($service, $data, 'FnApproveDocument');
-
-        if (!is_string($result)) {
-            Yii::$app->session->setFlash('success', 'Request Approved Successfully.', true);
-            return $this->redirect(Url::toRoute(['approvals/index']));
-        } else {
-            Yii::$app->session->setFlash('error', 'Error Approving Request.  : ' . $result);
-            return $this->redirect(Url::toRoute(['approvals/index']));
+        $contract = Contracts::find()->where(['contract_number' => $contractNumber])->one();
+        if ($contract) {
+            $approverID = Yii::$app->user->id;
+            $approvalEntry = WorkflowEntries::find()->where(['contract_id' => $contract->id, 'approval_status' => 1])->andWhere(['approver_id' => $approverID])->one();
+            if ($approvalEntry) {
+                $this->Approve($approvalEntry->id);
+            }
         }
     }
 
-    public function actionApprove()
+    public function Approve($id)
     {
-        $service = Yii::$app->params['ServiceName']['HRPortal'];
-        $Commentservice = Yii::$app->params['ServiceName']['ApprovalCommentLine'];
-
-        if (Yii::$app->request->post()) {
-            $comment = Yii::$app->request->post('comment');
-            $documentno = Yii::$app->request->post('documentNo');
-            $Approver_No = Yii::$app->request->post('Approver_No');
-            $Table_ID = Yii::$app->request->post('Table_ID');
-            $Approval_Entry_No = Yii::$app->request->post('Approval_Entry_No');
-            $commentData = [
-                'Comment' => $comment,
-                'Document_No' => $documentno,
-                'Approver_No' => $Approver_No
-            ];
-
-            $data = [
-                'docNo' => $documentno,
-                'approverNo' => $Approver_No
-            ];
-            //save comment
-            $Commentrequest = Yii::$app->navhelper->postData($Commentservice, $commentData);
-            // Call approve cunit function
-            if (is_string($Commentrequest)) {
-                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-                return ['note' => '<div class="alert alert-danger">Error Approving Request: ' . $Commentrequest . '</div>'];
-            }
-
-            $result = Yii::$app->navhelper->codeunit($service, $data, 'FnApproveDocument');
-
-            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-            if (!is_string($result)) {
-                return ['note' => '<div class="alert alert-success">Request Approved Successfully. </div>'];
+        $approvalEntryID = $id;
+        $entry = WorkflowEntries::find()->where(['id' => $approvalEntryID])->one();
+        $entry->approval_status = 2;
+        if ($entry->save()) {
+            // move to next sequence 
+            $nextSequence = WorkflowEntries::find()->where(['contract_id' => $entry->contract_id])
+                ->andWhere(['>', 'sequence', $entry->sequence])->one();
+            if ($nextSequence) {
+                $nextSequence->approval_status = 1;
+                $nextSequence->save();
+                Yii::$app->session->setFlash('success', 'contract has been approved.');
+                return $this->redirect(['approvals']);
             } else {
-                return ['note' => '<div class="alert alert-danger">Error Approving Request: ' . $result . '</div>'];
+                // mark contract as fully approved
+                $contract = Contracts::find()->where(['id' => $entry->contract_id])->one();
+                $contract->approval_status = 2;
+                if ($contract->save()) {
+                    Yii::$app->session->setFlash('success', 'contract has been fully signed and approved.');
+                }
             }
+            return $this->redirect(['approvals']);
         }
+
     }
     public function actionRejectRequest($docType = "")
     {
