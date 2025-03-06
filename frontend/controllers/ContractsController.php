@@ -167,7 +167,7 @@ class ContractsController extends Controller
         return $this->render('update', [
             'model' => $model,
             'durationUnits' => $durationUnits,
-            'content' => $model->original_contract_path ? Yii::$app->sharepoint->getBinary($model->original_contract_path) : NULL
+            'content' => ($model->original_contract_path && Yii::$app->utility->isValidSharepointLink($model->original_contract_path)) ? Yii::$app->sharepoint->getBinary($model->original_contract_path) : NULL
         ]);
     }
 
