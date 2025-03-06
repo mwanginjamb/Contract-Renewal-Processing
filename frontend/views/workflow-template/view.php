@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ]) ?>
 
         </div>
-        <div class="row">
+        <div class="row mx-3">
             <div class="col">
                 <h2>Approvers</h2>
                 <?= $this->render('_template-members', ['model' => $model]) ?>
