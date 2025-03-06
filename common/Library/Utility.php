@@ -18,6 +18,11 @@ class Utility extends Component
         return $sanitized_app . \Yii::$app->security->generateRandomString(5);
     }
 
+    public function truncateFilename($path)
+    {
+        return basename($path);
+    }
+
     // Stores identity object in a session variable
 
     public function PersistIdentity()

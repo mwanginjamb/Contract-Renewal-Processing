@@ -272,13 +272,10 @@ class EmsignerController extends Controller
                 Yii::$app->utility->logResult($post, Yii::$app->user->identity->staff_id_number . ' -' . 'decryption-content-' . $reference);
 
                 // send the signed file to sharepoint
+                $title = mb_strimwidth(Yii::$app->session->get('metadata')['title'], 0, 75, '');
 
-                $fileName = 'signed-' . Yii::$app->session->get('metadata')['title'] . '-' . $sessionRef . '.pdf';
-                // remove any forward slash
-                $fileName = str_replace('/', '', $fileName);
-                //remove colons
-                $fileName = str_replace(':', '', $fileName);
-                $fileName = mb_strimwidth($fileName, 0, 75, '');
+                $fileName = 'signed-' . Yii::$app->utility->truncateFilename($title) . '-' . $sessionRef . '.pdf';
+
 
                 $binary = $signedContent;
                 $parentDocumentNo = Yii::$app->session->get('metadata')['Application'];
