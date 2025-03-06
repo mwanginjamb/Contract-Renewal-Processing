@@ -74,6 +74,7 @@ class WorkflowTemplateMembersController extends Controller
     public function actionCreate()
     {
         $model = new WorkflowTemplateMembers();
+        $model->workflow_id = Yii::$app->request->get('workflow_template_id');
         $users = ArrayHelper::map(User::find()->all(), 'id', 'username');
 
         // If it's an AJAX validation request

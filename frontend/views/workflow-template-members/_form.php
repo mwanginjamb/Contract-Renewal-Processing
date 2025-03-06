@@ -22,7 +22,7 @@ use yii\bootstrap5\ActiveForm;
 
     <?php $form->field($model, 'user_id')->textInput() ?>
 
-    <?php $form->field($model, 'workflow_id')->textInput() ?>
+    <?= $form->field($model, 'workflow_id')->hiddenInput()->label(false) ?>
 
     <?php $form->field($model, 'created_at')->textInput() ?>
 
