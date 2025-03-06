@@ -424,4 +424,20 @@ class ContractsController extends Controller
             return $this->redirect(['view', 'id' => $No]);
         }
     }
+
+    public function isMycontract()
+    {
+        /**
+         * Check if the logged in user is the owner of the contract
+         */
+    }
+
+    public function icansign()
+    {
+        /**
+         * Check if the logged in user can sign the contract and is in the workflow
+         */
+    }
+
+
 }

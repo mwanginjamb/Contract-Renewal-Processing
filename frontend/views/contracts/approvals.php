@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <td class="fw-bold">Contractee (Employee)</td>
                         <td class="fw-bold">Approver</td>
                         <td class="fw-bold">Approver Status</td>
-                        <td class="fw-bold">Approval Action</td>
+                        <td class="fw-bold">Action</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?php foreach ($approvals as $c):
 
 
-
+                            $view = \yii\bootstrap5\Html::a('<i class="fas fa-eye mx-1"></i>', ['view', 'id' => $c->contract->id], ['title' => 'Review and Sign Contract', 'class' => 'btn btn-success btn-xs']);
                             $approval = ($c->approval_status == 1) ? \yii\bootstrap5\Html::a('<i class="fas fa-check mx-1"></i>', [
                                 'approve',
                                 'id'
@@ -61,7 +61,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <td><?= strtoupper($c->contract->employee_name) ?? '' ?></td>
                                 <td><?= $c->approver->approver_name ?? '' ?></td>
                                 <td><?= $c->approvalStatus->name ?? '' ?></td>
-                                <td><?= $approval ?></td>
+                                <td><?= $view ?></td>
 
                             </tr>
                         <?php endforeach; ?>
