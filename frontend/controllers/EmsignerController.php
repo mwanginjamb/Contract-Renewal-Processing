@@ -240,10 +240,12 @@ class EmsignerController extends Controller
     {
         //$data = file_get_contents('php://input');
         //$jsonParams = json_decode($data);
+
         $post = Yii::$app->request->post();
         $sessionRef = Yii::$app->session->get('reference');
 
-
+        // log metadata session
+        Yii::$app->utility->logResult(Yii::$app->session->get('metadata'), 'metadatalog-' . $sessionRef);
         //$sessionsLog = print_r($_SESSION, TRUE);
         Yii::$app->utility->log($post, Yii::$app->user->identity->staff_id_number . ' - ' . 'Signature Response Payload -' . $sessionRef);
 
@@ -285,7 +287,7 @@ class EmsignerController extends Controller
                 //Yii::$app->utility->printrr($spResult);
 
                 // Update signed path on contracts table
-                $contract = Contracts::findOne(Yii::$app->session->get('metadata')['Application']);
+                $contract = Contracts::find()->where(['contract_number' => Yii::$app->session->get('metadata')['Application']])->one();
                 $contract->signed_contract_path = $spResult;
                 if ($contract->save()) {
                     Yii::$app->session->setFlash('success', 'Document signed successfully. You can now proceed and send it to next approver.');
