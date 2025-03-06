@@ -223,10 +223,12 @@ class ContractsController extends Controller
             $parentDocumentNo = NULL;
             if (is_object($parentDocument)) {
                 $parentDocumentNo = $parentDocument->contract_number;
+                if (!Yii::$app->utility->isValidSharepointLink($parentDocument->original_contract_path)) {
+                    $parentDocument->original_contract_path = NULL;
+                    $parentDocument->save();
+                }
             }
             //  \Yii::$app->utility->printrr($parentDocumentNo);
-
-
 
             // Create a directory to store doc related to this proposal
             $folder = Yii::$app->sharepoint->createFolder($parentDocumentNo);
