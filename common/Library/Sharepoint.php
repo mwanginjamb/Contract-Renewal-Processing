@@ -138,7 +138,7 @@ class Sharepoint extends Component
 
 
             if ($nested) {
-                list($libraryTitle, $subfolder) = explode(DIRECTORY_SEPARATOR, $libraryTitle);
+                list($libraryTitle, $subfolder) = explode('\\', $libraryTitle);
                 $lib = $ctx->getWeb()->getLists()->getByTitle($libraryTitle);
                 // Get the root folder of the library
                 $rootFolder = $lib->getRootFolder();
@@ -163,6 +163,7 @@ class Sharepoint extends Component
             return "An error occurred: " . $e->getMessage();
         }
     }
+
 
     public function createFolder($folderName)
     {
