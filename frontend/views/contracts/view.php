@@ -57,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'contract_number',
                             'employee_name',
                             'employee_number',
-                            // 'original_contract_path',
+                            'original_contract_path',
                             [
                                 'attribute' => 'duration_unit',
                                 'value' => function ($model) {
