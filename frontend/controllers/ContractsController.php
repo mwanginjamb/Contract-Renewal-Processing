@@ -113,6 +113,10 @@ class ContractsController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
+        if (!Yii::$app->utility->isValidSharepointLink($model->original_contract_path)) {
+            $model->original_contract_path = null;
+            $model->save();
+        }
         return $this->render('view', [
             'model' => $model,
             'content' => ($model->original_contract_path && Yii::$app->utility->isValidSharepointLink($model->original_contract_path)) ? Yii::$app->sharepoint->getBinary($model->original_contract_path) : NULL
