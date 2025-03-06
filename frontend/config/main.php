@@ -15,11 +15,14 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'enableCsrfValidation' => YII_ENV === 'dev' ? false : true,
+            'enableCookieValidation' => true,
         ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
+            'authTimeout' => 60 * 60 * 1, // one hour
         ],
         'session' => [
             // this is the name of the session cookie used for login on the frontend

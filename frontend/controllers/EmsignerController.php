@@ -299,8 +299,8 @@ class EmsignerController extends Controller
         } catch (\Exception $e) {
             Yii::$app->utility->logResult($post, Yii::$app->user->identity->staff_id_number . ' - ' . 'Emudhra-Exception');
             Yii::$app->session->setFlash('error', 'Signature Session expired. Login again and attempt signing again.');
-            return $this->redirect(['./site/index']);
-            //echo $e->getMessage();
+            // return $this->redirect(['./site/index']);
+            echo $e->getMessage();
             // exit;
         }
 
