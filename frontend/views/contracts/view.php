@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Html;
+use yii\bootstrap5\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
@@ -31,13 +31,26 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 </div>
                 <div class="approval">
-                    <?= ($model->approval_status !== NULL) ? Html::a('Sign Contract', ['sign', 'id' => $model->id], [
-                        'class' => 'btn btn-warning',
-                        'data' => [
-                            'confirm' => 'Are you sure you want to digitally sign this document ?',
-                            'method' => 'post',
-                        ],
-                    ]) : '' ?>
+                    <?= ($model->approval_status == 1) ? Html::a(
+                        '<i class="fas fa-bookmark"></i>Track Status',
+                        ['track-approval', 'id' => $model->id],
+                        [
+                            'class' => 'btn btn-app bg-warning',
+                            'title' => 'Track contract signing status',
+                        ]
+                    ) : '' ?>
+                    <?= ($model->approval_status !== NULL) ? Html::a(
+                        '<i class="fas fa-signature"></i>Sign Contract',
+                        ['sign', 'id' => $model->id],
+                        [
+                            'class' => 'btn btn-app bg-success',
+                            'title' => 'Digitally sign contract',
+                            'data' => [
+                                'confirm' => 'Are you sure you want to digitally sign this document ?',
+                                'method' => 'post',
+                            ],
+                        ]
+                    ) : '' ?>
                     <?= ($model->approval_status == NULL && $model->original_contract_path) ? Html::a('Send for Approval', ['send-for-approval', 'id' => $model->id], [
                         'class' => 'btn btn-warning',
                         'data' => [
@@ -57,8 +70,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             'contract_number',
                             'employee_name',
                             'employee_number',
-                            'original_contract_path',
-                            'signed_contract_path',
+                            //'original_contract_path',
+                            //'signed_contract_path',
                             [
                                 'attribute' => 'duration_unit',
                                 'value' => function ($model) {

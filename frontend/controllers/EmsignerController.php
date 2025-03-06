@@ -399,6 +399,7 @@ class EmsignerController extends Controller
         $approvalEntryID = $id;
         $entry = WorkflowEntries::find()->where(['id' => $approvalEntryID])->one();
         $entry->approval_status = 2;
+        $contract = Contracts::find()->where(['id' => $entry->contract_id])->one();
         if ($entry->save()) {
             // move to next sequence 
             $nextSequence = WorkflowEntries::find()->where(['contract_id' => $entry->contract_id])
@@ -406,17 +407,16 @@ class EmsignerController extends Controller
             if ($nextSequence) {
                 $nextSequence->approval_status = 1;
                 $nextSequence->save();
-                Yii::$app->session->setFlash('success', 'contract has been approved.');
-                return $this->redirect(['approvals']);
+                Yii::$app->session->setFlash('success', 'You have successfully signed and pushed the contract to next reviewer.');
+                return $this->redirect(Url::toRoute(['contracts/view', 'id' => $contract->id]));
             } else {
                 // mark contract as fully approved
-                $contract = Contracts::find()->where(['id' => $entry->contract_id])->one();
                 $contract->approval_status = 2;
                 if ($contract->save()) {
-                    Yii::$app->session->setFlash('success', 'contract has been fully signed and approved.');
+                    Yii::$app->session->setFlash('success', 'contract has been fully signed and reviewed.');
                 }
             }
-            return $this->redirect(['approvals']);
+            return $this->redirect(Url::toRoute(['contracts/view', 'id' => $contract->id]));
         }
 
     }
