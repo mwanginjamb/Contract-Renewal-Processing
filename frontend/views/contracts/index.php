@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                             $view = \yii\bootstrap5\Html::a('<i class="fas fa-eye mx-1"></i>', ['view', 'id' => $c->id], ['title' => 'View Contract details', 'class' => 'btn btn-success btn-xs']);
                             $track = \yii\bootstrap5\Html::a('<i class="fas fa-bookmark mx-1"></i>', ['track-approval', 'id' => $c->id], ['class' => 'btn btn-warning btn-xs', 'title' => 'Track Approval']);
-                            $approval = (!$c->approval_status) ? \yii\bootstrap5\Html::a('<i class="fas fa-paper-plane mx-1"></i>', [
+                            $approval = (!$c->approval_status && $c->original_contract_path) ? \yii\bootstrap5\Html::a('<i class="fas fa-paper-plane mx-1"></i>', [
                                 'send-for-approval',
                                 'id'
                                 => $c->id
@@ -60,7 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ]
                             ]) : '';
 
-                            $cancelApproval = ($c->approval_status == 1) ? \yii\bootstrap5\Html::a('<i class="fas fa-times mx-1"></i>', [
+                            $cancelApproval = ($c->approval_status == 1 && $c->original_contract_path) ? \yii\bootstrap5\Html::a('<i class="fas fa-times mx-1"></i>', [
                                 'cancel-approval',
                                 'id'
                                 => $c->id

@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'method' => 'post',
                         ],
                     ]) : '' ?>
-                    <?= ($model->approval_status == NULL) ? Html::a('Send for Approval', ['send-for-approval', 'id' => $model->id], [
+                    <?= ($model->approval_status == NULL && $model->original_contract_path) ? Html::a('Send for Approval', ['send-for-approval', 'id' => $model->id], [
                         'class' => 'btn btn-warning',
                         'data' => [
                             'confirm' => 'Are you sure you want to send this contract for approval ?',

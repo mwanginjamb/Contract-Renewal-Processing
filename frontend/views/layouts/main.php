@@ -300,6 +300,13 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                                         <p>Approval Statuses</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="<?= $absoluteUrl ?>duration-units"
+                                        class="nav-link <?= Yii::$app->utility->currentaction('duration-units', 'index') ? 'active' : '' ?>">
+                                        <i class="fa fa-car nav-icon"></i>
+                                        <p>Duration Units</p>
+                                    </a>
+                                </li>
 
                             </ul>
                         </li>
