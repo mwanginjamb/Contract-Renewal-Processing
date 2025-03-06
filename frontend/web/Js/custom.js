@@ -570,7 +570,7 @@ async function globalUpload(attachmentService = false, entity, fieldName, docume
             uploadIndicator(formField, 'Contract File uploaded successfully');
             setTimeout(() => {  // clean up the notification elements after 3 seconds
                 removeUploadIndicator();
-                location.reload();
+                // location.reload();
             }, 2000);
         }
 
