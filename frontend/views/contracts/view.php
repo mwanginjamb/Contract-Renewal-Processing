@@ -20,14 +20,14 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
             <div class="my-3 d-flex justify-content-between">
                 <div class="actions">
-                    <?= ($model->approval_status == NULL && !$model->ismycontract($model->id)) ? Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : '' ?>
-                    <?= ($model->approval_status == NULL && !$model->ismycontract($model->id)) ? Html::a('Delete', ['delete', 'id' => $model->id], [
+                    <?php Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+                    <?php Html::a('Delete', ['delete', 'id' => $model->id], [
                         'class' => 'btn btn-danger',
                         'data' => [
                             'confirm' => 'Are you sure you want to delete this item?',
                             'method' => 'post',
                         ],
-                    ]) : '' ?>
+                    ]) ?>
 
                 </div>
                 <div class="approval">
