@@ -71,27 +71,23 @@ $this->params['breadcrumbs'][] = $this->title;
                             $view = \yii\bootstrap5\Html::a('<i class="fas fa-eye mx-1"></i>', ['../contracts/view', 'id' => $c->id], ['title' => 'View Contract details', 'class' => 'btn btn-success btn-xs', 'target' => '_blank']);
                             $update = \yii\bootstrap5\Html::a('<i class="fas fa-edit mx-1"></i>', ['../contracts/update', 'id' => $c->id], ['title' => 'Update Contract details', 'class' => 'btn btn-success btn-xs', 'target' => '_blank']);
 
-                            $accessLink = ($c->original_contract_path) ? $view : $update;
+                            $accessLink = ($c->original_contract_path && Yii::$app->utility->isValidSharepointLink($c->original_contract_path)) ? $view : $update;
                             $track = \yii\bootstrap5\Html::a('<i class="fas fa-bookmark mx-1"></i>', ['../contracts/track-approval', 'id' => $c->id], ['class' => 'btn btn-warning btn-xs', 'title' => 'Track Approval', 'target' => '_blank']);
-                            $approval = (!$c->approval_status && $c->original_contract_path) ? \yii\bootstrap5\Html::a('<i class="fas fa-paper-plane mx-1"></i>', [
-                                '../contracts/send-for-approval',
-                                'id'
-                                => $c->id
-                            ], [
+                            $approval = (!$c->approval_status && (Yii::$app->utility->isValidSharepointLink($c->original_contract_path) && $c->original_contract_path)) ? \yii\bootstrap5\Html::a('<i class="fas fa-paper-plane mx-1"></i>Ready for Signing', '#', [
                                 'class' => 'btn btn-info btn-xs',
-                                'title' => 'send for Approval',
+                                'title' => 'Contract is ready for signing process',
                                 'data' => [
                                     'confirm' => 'Are you sure you want to send this document for approval ?',
                                     'method' => 'post',
                                 ]
                             ]) : '';
 
-                            $cancelApproval = ($c->approval_status == 1 && $c->original_contract_path) ? \yii\bootstrap5\Html::a('<i class="fas fa-times mx-1"></i>', [
+                            $cancelApproval = ($c->approval_status == 1 && Yii::$app->utility->isValidSharepointLink($c->original_contract_path)) ? \yii\bootstrap5\Html::a('<i class="fas fa-times mx-1"></i> in progress ..', [
                                 '../contracts/cancel-approval',
                                 'id'
                                 => $c->id
                             ], [
-                                'class' => 'btn btn-danger btn-xs',
+                                'class' => 'btn btn-success btn-xs',
                                 'title' => 'send for Approval',
                                 'data' => [
                                     'confirm' => 'Are you sure you want to cancel approval request for this record ?',
@@ -131,7 +127,12 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-
-
-
 </div>
+
+<?php
+
+$script = <<<JS
+    $('#table').DataTable();
+JS;
+
+$this->registerJs($script);

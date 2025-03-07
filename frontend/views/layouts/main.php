@@ -51,7 +51,7 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 
 
     <?php $this->registerCsrfMetaTags() ?>
-    <title><?= Html::encode(Yii::$app->name) ?></title>
+    <title><?= $this->title . ' | ' . Html::encode(Yii::$app->name) ?></title>
 
     <?php $this->head() ?>
     <style>
