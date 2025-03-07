@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <h3 class="card-title"><?= Html::encode($this->title) ?></h3>
             <div class="card-tools">
                 <?= Html::a(Yii::t('app', '<i class="fas fa-file-excel"></i> Import Contracts'), ['excel-import', 'batch' => $model->id], ['class' => 'mx-2 btn btn-success', 'title' => 'Import contracts into this batch.']) ?>
-                <?= Html::a(Yii::t('app', '<i class="fas fa-download"></i> Download Template'), ['download', 'templateName' => 'estate_entity_import_template.xlsx'], ['class' => 'btn btn-warning', 'title' => 'Download Import Excel Template']) ?>
+                <?= Html::a(Yii::t('app', '<i class="fas fa-download"></i> Download Template'), ['download', 'templateName' => 'contracts_template.xlsx'], ['class' => 'btn btn-warning', 'title' => 'Download Import Excel Template']) ?>
             </div>
         </div>
         <div class="card-body">
