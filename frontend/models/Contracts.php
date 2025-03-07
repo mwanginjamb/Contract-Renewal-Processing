@@ -32,6 +32,8 @@ use yii\behaviors\TimestampBehavior;
 class Contracts extends \yii\db\ActiveRecord
 {
 
+    const EVENT_CONTRACT_ATTACHED = 'contractAttached';
+
     public $attachment;
     public function behaviors()
     {
@@ -113,6 +115,11 @@ class Contracts extends \yii\db\ActiveRecord
         return $this->hasOne(ApprovalStatus::class, ['id' => 'approval_status']);
     }
 
+    public function getUser()
+    {
+        return $this->hasOne(User::class, ['staff_id_number' => 'employee_number']);
+    }
+
     /**
      * {@inheritdoc}
      * @return \app\models\query\ContractsQuery the active query used by this AR class.
@@ -143,6 +150,19 @@ class Contracts extends \yii\db\ActiveRecord
             return $approvalEntry ? true : false;
         }
         return false;
+    }
+
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+        // check if original_contract_path has changed and is valid
+        if (!$insert && ($this->original_contract_path && Yii::$app->utility->isValidSharepointLink($this->original_contract_path))) {
+            // Ensure you fire this event only when previous value was null
+            if (isset($changedAttributes['original_contract_path']) && $changedAttributes['original_contract_path'] == NULL) {
+                $this->trigger(self::EVENT_CONTRACT_ATTACHED);
+            }
+        }
     }
 
 

@@ -169,8 +169,10 @@ class Utility extends Component
      */
     public function isValidSharepointLink($link)
     {
-        if (strpos($link, 'sharepoint.com') === false) {
-            return false;
+        if ($link) {
+            if (strpos($link, 'sharepoint.com') === false) {
+                return false;
+            }
         }
         return true;
     }

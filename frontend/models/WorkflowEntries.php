@@ -28,6 +28,7 @@ use yii\behaviors\TimestampBehavior;
  */
 class WorkflowEntries extends \yii\db\ActiveRecord
 {
+    const EVENT_STATUS_PENDING = 'statusPending';
 
     public function behaviors()
     {
@@ -127,6 +128,19 @@ class WorkflowEntries extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \app\models\query\WorkflowEntriesQuery(get_called_class());
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        // check if approval_status is 1 (Pending) and has changed
+        if ($this->approval_status == 1 && ($insert || $changedAttributes['approval_status'])) {
+            // Trigger the event only if the status changed To 1
+            if ($insert || $changedAttributes['approval_status'] != 1) {
+                $this->trigger(self::EVENT_STATUS_PENDING);
+            }
+        }
     }
 
 }

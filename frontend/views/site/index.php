@@ -38,7 +38,7 @@ $this->title = 'My Contracts';
                                 $view = \yii\bootstrap5\Html::a('<i class="fas fa-eye mx-1"></i>', ['../contracts/view', 'id' => $c->id], ['title' => 'View Contract details', 'class' => 'btn btn-success btn-xs']);
                                 $track = \yii\bootstrap5\Html::a('<i class="fas fa-bookmark mx-1"></i>', ['../contracts/track-approval', 'id' => $c->id], ['class' => 'btn btn-warning btn-xs', 'title' => 'Track Approval']);
                                 $approval = (!$c->approval_status) ? \yii\bootstrap5\Html::a('<i class="fas fa-paper-plane mx-1"></i>', [
-                                    '../cintracts/send-for-approval',
+                                    '../contracts/send-for-approval',
                                     'id'
                                     => $c->id
                                 ], [
@@ -51,7 +51,7 @@ $this->title = 'My Contracts';
                                 ]) : '';
 
                                 $cancelApproval = ($c->approval_status == 1) ? \yii\bootstrap5\Html::a('<i class="fas fa-times mx-1"></i>', [
-                                    'cancel-approval',
+                                    '../contracts/cancel-approval',
                                     'id'
                                     => $c->id
                                 ], [
