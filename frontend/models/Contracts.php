@@ -157,10 +157,17 @@ class Contracts extends \yii\db\ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
         // check if original_contract_path has changed and is valid
-        if (!$insert && ($this->original_contract_path && Yii::$app->utility->isValidSharepointLink($this->original_contract_path))) {
+        if (
+            !$insert &&
+            $this->original_contract_path &&
+            Yii::$app->utility->isValidSharepointLink($this->original_contract_path)
+        ) {
             // Ensure you fire this event only when previous value was null
-            if (isset($changedAttributes['original_contract_path']) && $changedAttributes['original_contract_path'] == NULL) {
+            if (empty($changedAttributes['original_contract_path']) || isset($changedAttributes['original_contract_path'])) {
+                Yii::info('Contract attached ' . $this->contract_number);
                 $this->trigger(self::EVENT_CONTRACT_ATTACHED);
+            } else {
+                Yii::error('Contract notification not fired ' . $this->contract_number);
             }
         }
     }

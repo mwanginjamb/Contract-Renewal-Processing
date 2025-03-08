@@ -38,11 +38,16 @@ class NotificationsHandler extends Component
         $workflowEntry = $event->sender; // workflowEntries model instance
 
         // Send notification
-        Yii::$app->mailer->compose()
+        Yii::$app
+            ->mailer
+            ->compose(
+                ['html' => 'workflowNotification-html'],
+                ['workflowEntry' => $workflowEntry]
+            )
             ->setFrom(env('SMTP_USERNAME'))
             ->setTo($workflowEntry->approver->approver_email) // Ensure `approver` relation exists
-            ->setSubject("Approval Required: Contract #{$workflowEntry->contract->contract_number}")
-            ->setTextBody("Contract #{$workflowEntry->contract->contract_number} is pending your approval.")
+            ->setSubject("APPROVAL REQUIRED FOR STAFF CONTRACT: #{$workflowEntry->contract->contract_number}")
+            // ->setTextBody("Contract #{$workflowEntry->contract->contract_number} is pending your approval.")
             ->send();
     }
 
@@ -50,11 +55,16 @@ class NotificationsHandler extends Component
     {
         $contract = $event->sender; // Contracts model instance
         // Send notification
-        Yii::$app->mailer->compose()
+        Yii::$app
+            ->mailer
+            ->compose(
+                ['html' => 'officerSigningNotification-html'],
+                ['contract' => $contract]
+            )
             ->setFrom(env('SMTP_USERNAME'))
             ->setTo($contract->user->email) // Ensure `user` relation exists
-            ->setSubject("Contract #{$contract->contract_number} is ready for review")
-            ->setTextBody("Contract #{$contract->contract_number} is ready for review.")
+            ->setSubject("YOUR STAFF CONTRACT #{$contract->contract_number} IS READY FOR SIGNING")
+            // ->setTextBody("Contract #{$contract->contract_number} is ready for review.")
             ->send();
     }
 
