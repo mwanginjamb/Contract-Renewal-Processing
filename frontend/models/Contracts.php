@@ -33,6 +33,7 @@ class Contracts extends \yii\db\ActiveRecord
 {
 
     const EVENT_CONTRACT_ATTACHED = 'contractAttached';
+    const EVENT_CONTRACT_FULLY_SIGNED = 'contractFullySigned';
 
     public $attachment;
     public function behaviors()
@@ -156,18 +157,29 @@ class Contracts extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
-        // check if original_contract_path has changed and is valid
+        // check if original_contract_path has changed and is valid then fire the contract attached event
         if (
             !$insert &&
             $this->original_contract_path &&
             Yii::$app->utility->isValidSharepointLink($this->original_contract_path)
         ) {
-            // Ensure you fire this event only when previous value was null
+
             if (empty($changedAttributes['original_contract_path']) || isset($changedAttributes['original_contract_path'])) {
                 Yii::info('Contract attached ' . $this->contract_number);
                 $this->trigger(self::EVENT_CONTRACT_ATTACHED);
             } else {
                 Yii::error('Contract notification not fired ' . $this->contract_number);
+            }
+        }
+
+        // Trigger for a fully approved contract
+        if (!$insert && !is_null($this->approval_status) && $this->approval_status == 2) {
+            // Ensure you fire this event only when previous value was pending
+            if (!empty($changedAttributes['approval_status']) && $changedAttributes['approval_status'] == 1) {
+                Yii::info('Contract  ' . $this->contract_number . ' has been fully approved.');
+                $this->trigger(self::EVENT_CONTRACT_ATTACHED);
+            } else {
+                Yii::error('Contract full approval event not fired ' . $this->contract_number);
             }
         }
     }
