@@ -8,35 +8,44 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div class="role-assignment">
-    <h2>Assign Roles to <?= Html::encode($user->username) ?></h2>
 
-    <?php $form = ActiveForm::begin([
-        'id' => 'role-assignment-form',
-        'enableAjaxValidation' => true,
-    ]); ?>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Assign Roles to <b><?= Html::encode(strtoupper($user->username)) ?></b></h3>
+        </div>
+        <div class="card-body">
+            <?php $form = ActiveForm::begin([
+                'id' => 'role-assignment-form',
+                'enableAjaxValidation' => true,
+            ]); ?>
 
-    <?= $form->field($model, 'roles')->checkboxList(
-        \yii\helpers\ArrayHelper::map($allRoles, 'name', 'name'),
-        [
-            'item' => function ($index, $label, $name, $checked, $value) {
-                return Html::checkbox($name, $checked, [
-                    'value' => $value,
-                    'label' => '<span class="role-item">' . $label . '</span>',
-                    'labelOptions' => ['class' => 'role-label'],
-                    'class' => 'role-checkbox'
-                ]);
-            }
-        ]
-    ) ?>
+            <?= $form->field($model, 'roles')->checkboxList(
+                \yii\helpers\ArrayHelper::map($allRoles, 'name', 'name'),
+                [
+                    'item' => function ($index, $label, $name, $checked, $value) {
+                        return Html::checkbox($name, $checked, [
+                            'value' => $value,
+                            'label' => '<span class="role-item">' . strtoupper($label) . '</span>',
+                            'labelOptions' => ['class' => 'role-label'],
+                            'class' => 'role-checkbox'
+                        ]);
+                    }
+                ]
+            ) ?>
 
-    <?= $form->field($model, 'userId')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'userId')->hiddenInput()->label(false) ?>
 
-    <div class="form-group">
-        <?= Html::submitButton('Save Roles', ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Cancel', ['user-roles'], ['class' => 'btn btn-default']) ?>
+            <div class="form-group">
+                <?= Html::submitButton('Save Roles', ['class' => 'btn btn-primary']) ?>
+                <?= Html::a('Cancel', ['user-roles'], ['class' => 'btn btn-default']) ?>
+            </div>
+
+            <?php ActiveForm::end(); ?>
+
+        </div>
     </div>
 
-    <?php ActiveForm::end(); ?>
+
 </div>
 
 <style>

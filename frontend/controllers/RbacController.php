@@ -130,6 +130,47 @@ class RbacController extends Controller
         ]);
     }
 
+    public function actionDeleteRole($name)
+    {
+        $auth = Yii::$app->authManager;
+        $role = $auth->getRole($name);
+
+        if (!$role) {
+            Yii::$app->session->setFlash('error', "Role '$name' not found");
+            return $this->redirect(['index']);
+        }
+
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            // Remove all role assignments first
+            $auth->revokeAll($role->name);
+
+            // Remove role hierarchy relationships
+            $auth->removeChildren($role);
+
+            // Finally delete the role itself
+            if ($auth->remove($role)) {
+                $transaction->commit();
+                Yii::$app->session->setFlash(
+                    'success',
+                    "Role '$name' deleted successfully. " .
+                    "All associated permissions and user assignments were removed."
+                );
+            } else {
+                $transaction->rollBack();
+                Yii::$app->session->setFlash('error', "Failed to delete role '$name'");
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::$app->session->setFlash(
+                'error',
+                "Error deleting role '$name': " . $e->getMessage()
+            );
+        }
+
+        return $this->redirect(['index']);
+    }
+
     /**
      * List users with their roles
      * @return string
