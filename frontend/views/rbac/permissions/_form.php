@@ -1,16 +1,19 @@
 <?php
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap5\Html;
+use yii\bootstrap5\ActiveForm;
 
 /* @var $model backend\models\PermissionForm */
 /* @var $existingPermissions yii\rbac\Permission[] */
 /* @var $isUpdate bool */
 ?>
 
+
 <?php $form = ActiveForm::begin([
     'id' => 'permission-form',
-    'enableAjaxValidation' => true,
+    // 'enableAjaxValidation' => true,
 ]); ?>
+
+<?= $form->errorSummary($model) ?>
 
 <?= $form->field($model, 'name')->textInput([
     'maxlength' => true,

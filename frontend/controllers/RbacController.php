@@ -209,9 +209,11 @@ class RbacController extends Controller
                 $auth->revokeAll($userId);
 
                 // Assign new roles
-                foreach ($model->roles as $roleName) {
-                    if ($role = $auth->getRole($roleName)) {
-                        $auth->assign($role, $userId);
+                if (is_array($model->roles)) {
+                    foreach ($model->roles as $roleName) {
+                        if ($role = $auth->getRole($roleName)) {
+                            $auth->assign($role, $userId);
+                        }
                     }
                 }
 
@@ -348,7 +350,11 @@ class RbacController extends Controller
                 }
 
                 // Update parent relationship
-                $auth->removeParents($permission);
+                $existingParents = $this->getPermissionParents($permission->name);
+                foreach ($existingParents as $parent) {
+                    $auth->removeChild($parent, $permission);
+                }
+
                 if ($model->parent) {
                     $parent = $auth->getPermission($model->parent);
                     $auth->addChild($parent, $permission);
@@ -368,6 +374,7 @@ class RbacController extends Controller
             'existingPermissions' => $existingPermissions
         ]);
     }
+
 
     private function transferPermissionRelations($oldName, $newName)
     {

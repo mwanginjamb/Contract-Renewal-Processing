@@ -1,6 +1,7 @@
 <?php
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap5\Html;
+use yii\bootstrap5\ActiveForm;
+$this->title = 'Assign User Role';
 
 /* @var $model backend\models\UserRoleForm */
 /* @var $user common\models\User */
@@ -16,9 +17,9 @@ use yii\widgets\ActiveForm;
         <div class="card-body">
             <?php $form = ActiveForm::begin([
                 'id' => 'role-assignment-form',
-                'enableAjaxValidation' => true,
+                //'enableAjaxValidation' => true,
             ]); ?>
-
+            <?= $form->errorSummary($model); ?>
             <?= $form->field($model, 'roles')->checkboxList(
                 \yii\helpers\ArrayHelper::map($allRoles, 'name', 'name'),
                 [

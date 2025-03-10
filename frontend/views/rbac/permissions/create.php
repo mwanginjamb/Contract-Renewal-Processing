@@ -8,10 +8,18 @@ use yii\helpers\Html;
 $this->title = 'Create New Permission';
 ?>
 <div class="permission-create">
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?= $this->render('_form', [
-        'model' => $model,
-        'existingPermissions' => $existingPermissions,
-        'isUpdate' => false
-    ]) ?>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title"><?= Html::encode($this->title) ?></h3>
+        </div>
+        <div class="card-body">
+            <?= $this->render('_form', [
+                'model' => $model,
+                'existingPermissions' => $existingPermissions,
+                'isUpdate' => false
+            ]) ?>
+
+        </div>
+    </div>
+
 </div>

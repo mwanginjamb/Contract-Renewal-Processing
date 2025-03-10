@@ -20,8 +20,8 @@ AdminlteAsset::register($this);
 
 $webroot = Yii::getAlias(@$webroot);
 $absoluteUrl = \yii\helpers\Url::home(true);
-
-
+$auth = Yii::$app->authManager;
+$role = implode(',', array_keys($auth->getRolesByUser(Yii::$app->user->id)));
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -80,11 +80,11 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                     </li>
 
 
-
-                    <li class="nav-item d-none d-sm-inline-block">
-                        <?= Html::a('My Contracts', ['site/index'], ['class' => "nav-link"]) ?>
-
-                    </li>
+                    <?php if (Yii::$app->user->can('accessOwnContracts')): ?>
+                        <li class="nav-item d-none d-sm-inline-block">
+                            <?= Html::a('My Contracts', ['site/index'], ['class' => "nav-link"]) ?>
+                        </li>
+                    <?php endif; ?>
 
 
 
@@ -152,7 +152,7 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                         <div class="dropdown-divider"></div>
                         <!-- <?= (!Yii::$app->user->isGuest) ? Html::a('<i class="fas fa-users mx-1"></i> Help Desk', '/issue/create', ['class' => 'dropdown-item', 'title' => 'ESS Help Desk: Escalate any ESS issue via this facility', 'target' => '_blank']) : ''; ?> -->
                         <div class="dropdown-divider"></div>
-                        <?= (!Yii::$app->user->isGuest) ? Html::a('<i class="fas fa-sign-out-alt mx-1"></i> Logout (' . ucwords(\Yii::$app->user->identity->username) . ')', '/site/logout/', [
+                        <?= (!Yii::$app->user->isGuest) ? Html::a('<i class="fas fa-sign-out-alt mx-1"></i> Logout (' . ucwords(\Yii::$app->user->identity->username . ' - ' . $role) . ')', '/site/logout/', [
                             'class' => 'dropdown-item',
                             'data' => [
                                 'method' => 'POST'
@@ -207,7 +207,7 @@ $absoluteUrl = \yii\helpers\Url::home(true);
 
 
                         <!--Approval Management -->
-                        <?php if (1): ?>
+                        <?php if (Yii::$app->user->can('accessApprovals')): ?>
                             <li
                                 class="nav-item has-treeview <?= Yii::$app->utility->currentCtrl('contracts') ? 'menu-open' : '' ?>">
 
@@ -240,116 +240,120 @@ $absoluteUrl = \yii\helpers\Url::home(true);
                         <!--end Aprroval Management-->
 
                         <!-- contracts -->
-                        <li
-                            class="nav-item has-treeview  <?= Yii::$app->utility->currentCtrl(['contracts']) ? 'menu-open' : '' ?>">
-                            <a href="#" title="Contracts Management"
-                                class="nav-link <?= Yii::$app->utility->currentCtrl('contracts') ? 'active' : '' ?>">
-                                <i class="nav-icon fas fa-paper-plane"></i>
-                                <p>
-                                    Contracts
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>contract-batch"
-                                        class="nav-link <?= Yii::$app->utility->currentaction('contracts', 'index') ? 'active' : '' ?>">
-                                        <i class="fa fa-door-open nav-icon"></i>
-                                        <p>Contract Batches List</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>contracts"
-                                        class="nav-link <?= Yii::$app->utility->currentaction('contracts', 'index') ? 'active' : '' ?>">
-                                        <i class="fa fa-door-open nav-icon"></i>
-                                        <p>Contracts List</p>
-                                    </a>
-                                </li>
+                        <?php if (Yii::$app->user->can('accessContracts')): ?>
+                            <li
+                                class="nav-item has-treeview  <?= Yii::$app->utility->currentCtrl(['contracts']) ? 'menu-open' : '' ?>">
+                                <a href="#" title="Contracts Management"
+                                    class="nav-link <?= Yii::$app->utility->currentCtrl('contracts') ? 'active' : '' ?>">
+                                    <i class="nav-icon fas fa-paper-plane"></i>
+                                    <p>
+                                        Contracts
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="<?= $absoluteUrl ?>contract-batch"
+                                            class="nav-link <?= Yii::$app->utility->currentaction('contracts', 'index') ? 'active' : '' ?>">
+                                            <i class="fa fa-door-open nav-icon"></i>
+                                            <p>Contract Batches List</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="<?= $absoluteUrl ?>contracts"
+                                            class="nav-link <?= Yii::$app->utility->currentaction('contracts', 'index') ? 'active' : '' ?>">
+                                            <i class="fa fa-door-open nav-icon"></i>
+                                            <p>Contracts List</p>
+                                        </a>
+                                    </li>
 
-                            </ul>
-                        </li>
+                                </ul>
+                            </li>
+                        <?php endif; ?>
 
 
                         <!-- Workflow mgt -->
-                        <li
-                            class="nav-item has-treeview  <?= Yii::$app->utility->currentCtrl(['workflow-template']) ? 'menu-open' : '' ?>">
-                            <a href="#" title="Workflow Management"
-                                class="nav-link <?= Yii::$app->utility->currentCtrl(['workflow-template']) ? 'active' : '' ?>">
-                                <i class="nav-icon fas fa-stream"></i>
-                                <p>
-                                    Workflows
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
+                        <?php if (Yii::$app->user->can('accessWorkflows')): ?>
+                            <li
+                                class="nav-item has-treeview  <?= Yii::$app->utility->currentCtrl(['workflow-template']) ? 'menu-open' : '' ?>">
+                                <a href="#" title="Workflow Management"
+                                    class="nav-link <?= Yii::$app->utility->currentCtrl(['workflow-template']) ? 'active' : '' ?>">
+                                    <i class="nav-icon fas fa-stream"></i>
+                                    <p>
+                                        Workflows
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
 
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>workflow-template"
-                                        class="nav-link <?= Yii::$app->utility->currentaction('workflow-template', 'index') ? 'active' : '' ?>">
-                                        <i class="fa fa-stream nav-icon"></i>
-                                        <p>Workflow Groups</p>
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href="<?= $absoluteUrl ?>workflow-template"
+                                            class="nav-link <?= Yii::$app->utility->currentaction('workflow-template', 'index') ? 'active' : '' ?>">
+                                            <i class="fa fa-stream nav-icon"></i>
+                                            <p>Workflow Groups</p>
+                                        </a>
+                                    </li>
 
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>approval-status"
-                                        class="nav-link <?= Yii::$app->utility->currentaction('approval-status', 'index') ? 'active' : '' ?>">
-                                        <i class="fa fa-stream nav-icon"></i>
-                                        <p>Approval Statuses</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>duration-units"
-                                        class="nav-link <?= Yii::$app->utility->currentaction('duration-units', 'index') ? 'active' : '' ?>">
-                                        <i class="fa fa-stream nav-icon"></i>
-                                        <p>Duration Units</p>
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href="<?= $absoluteUrl ?>approval-status"
+                                            class="nav-link <?= Yii::$app->utility->currentaction('approval-status', 'index') ? 'active' : '' ?>">
+                                            <i class="fa fa-stream nav-icon"></i>
+                                            <p>Approval Statuses</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="<?= $absoluteUrl ?>duration-units"
+                                            class="nav-link <?= Yii::$app->utility->currentaction('duration-units', 'index') ? 'active' : '' ?>">
+                                            <i class="fa fa-stream nav-icon"></i>
+                                            <p>Duration Units</p>
+                                        </a>
+                                    </li>
 
-                            </ul>
-                        </li>
+                                </ul>
+                            </li>
+                        <?php endif; ?>
 
 
                         <!-- RBAC Management -->
+                        <?php if (Yii::$app->user->can('admin')): ?>
+                            <li
+                                class="nav-item has-treeview  <?= Yii::$app->utility->currentCtrl(['workflow-template']) ? 'menu-open' : '' ?>">
+                                <a href="#" title="Role Based Access Control Management"
+                                    class="nav-link <?= Yii::$app->utility->currentCtrl(['workflow-template']) ? 'active' : '' ?>">
+                                    <i class="nav-icon fas fa-user-lock"></i>
+                                    <p>
+                                        RBAC Mgt.
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
 
-                        <li
-                            class="nav-item has-treeview  <?= Yii::$app->utility->currentCtrl(['workflow-template']) ? 'menu-open' : '' ?>">
-                            <a href="#" title="Role Based Access Control Management"
-                                class="nav-link <?= Yii::$app->utility->currentCtrl(['workflow-template']) ? 'active' : '' ?>">
-                                <i class="nav-icon fas fa-user-lock"></i>
-                                <p>
-                                    RBAC Mgt.
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="<?= $absoluteUrl ?>rbac/user-roles"
+                                            class="nav-link <?= Yii::$app->utility->currentaction('workflow-template', 'index') ? 'active' : '' ?>">
+                                            <i class="fa fa-user-tag nav-icon"></i>
+                                            <p>User Role Assignment</p>
+                                        </a>
+                                    </li>
 
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>rbac/user-roles"
-                                        class="nav-link <?= Yii::$app->utility->currentaction('workflow-template', 'index') ? 'active' : '' ?>">
-                                        <i class="fa fa-user-tag nav-icon"></i>
-                                        <p>User Role Assignment</p>
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href="<?= $absoluteUrl ?>rbac"
+                                            class="nav-link <?= Yii::$app->utility->currentaction('approval-status', 'index') ? 'active' : '' ?>">
+                                            <i class="fa fa-users-cog nav-icon"></i>
+                                            <p>Roles</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="<?= $absoluteUrl ?>rbac/permissions"
+                                            class="nav-link <?= Yii::$app->utility->currentaction('duration-units', 'index') ? 'active' : '' ?>">
+                                            <i class="fa fa-key nav-icon"></i>
+                                            <p>Permissions</p>
+                                        </a>
+                                    </li>
 
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>rbac"
-                                        class="nav-link <?= Yii::$app->utility->currentaction('approval-status', 'index') ? 'active' : '' ?>">
-                                        <i class="fa fa-users-cog nav-icon"></i>
-                                        <p>Roles</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="<?= $absoluteUrl ?>rbac/permissions"
-                                        class="nav-link <?= Yii::$app->utility->currentaction('duration-units', 'index') ? 'active' : '' ?>">
-                                        <i class="fa fa-key nav-icon"></i>
-                                        <p>Permissions</p>
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </li>
-
+                                </ul>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

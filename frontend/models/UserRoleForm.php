@@ -16,6 +16,7 @@ class UserRoleForm extends Model
             [['userId'], 'required'],
             [['userId'], 'integer'],
             ['roles', 'each', 'rule' => ['string']],
+            ['roles', 'default', 'value' => []],
             ['roles', 'validateRoles']
         ];
     }

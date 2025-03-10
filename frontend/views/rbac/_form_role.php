@@ -9,7 +9,7 @@ use yii\widgets\ActiveForm;
 
 <?php $form = ActiveForm::begin([
     'id' => 'role-form',
-    'enableAjaxValidation' => true,
+    // 'enableAjaxValidation' => true,
 ]); ?>
 
 <?= $form->field($model, 'role_name')->textInput([
@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
             'item' => function ($index, $label, $name, $checked, $value) {
                     return Html::checkbox($name, $checked, [
                         'value' => $value,
-                        'label' => '<div class="badge badge-primary">' . $label . '</div>',
+                        'label' => '<div class="badge badge-info ">' . $label . '</div>',
                         'labelOptions' => ['class' => 'mx-3 '],
                         'class' => 'form-check-input'
                     ]);
@@ -51,16 +51,20 @@ use yii\widgets\ActiveForm;
 <?php
 
 $style = <<<CSS
-.perm-item {
-    padding: 5px 10px;
-    margin: 2px;
-    border-radius: 3px;
-    background: #f8f9fa;
-    display: inline-block;
+#roleform-permissions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 1rem 0;
 }
-.perm-checkbox:checked + .perm-label .perm-item {
-    background: #e3f2fd;
-    font-weight: bold;
+
+#roleform-permissions label{ 
+ align-items: center;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    margin: 0; /* Remove default margins */
 }
 CSS;
 
