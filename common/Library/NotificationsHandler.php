@@ -31,6 +31,14 @@ class NotificationsHandler extends Component
             Contracts::EVENT_CONTRACT_ATTACHED,
             [$this, 'handleContractAttached']
         );
+
+        // Listen to custom event "EVENT_CONTRACT_FULLY_SIGNED" from Contracts model
+
+        Event::on(
+            Contracts::class,
+            Contracts::EVENT_CONTRACT_FULLY_SIGNED,
+            [$this, 'handleContractFullySigned']
+        );
     }
 
     public function handleStatusPending(Event $event)
@@ -64,6 +72,27 @@ class NotificationsHandler extends Component
             ->setFrom(env('SMTP_USERNAME'))
             ->setTo($contract->user->email) // Ensure `user` relation exists
             ->setSubject("YOUR STAFF CONTRACT #{$contract->contract_number} IS READY FOR SIGNING")
+            // ->setTextBody("Contract #{$contract->contract_number} is ready for review.")
+            ->send();
+    }
+
+    public function handleContractFullySigned(Event $event)
+    {
+        $contract = $event->sender; // Contracts model instance
+        $hrEmails = Yii::$app->utility->getHremails();
+        $officerEmail = [$contract->user->email];
+
+        $to = array_merge($hrEmails, $officerEmail);
+        // Send notification
+        Yii::$app
+            ->mailer
+            ->compose(
+                ['html' => 'officerSigningNotification-html'],
+                ['contract' => $contract]
+            )
+            ->setFrom(env('SMTP_USERNAME'))
+            ->setTo($to) // Ensure `user` relation exists
+            ->setSubject("STAFF CONTRACT #{$contract->contract_number} HAS BEEN FULLY SIGNED.")
             // ->setTextBody("Contract #{$contract->contract_number} is ready for review.")
             ->send();
     }

@@ -3,6 +3,7 @@
 namespace common\Library;
 
 use Yii;
+use app\models\User;
 use yii\base\Component;
 use yii\helpers\FileHelper;
 
@@ -181,6 +182,34 @@ class Utility extends Component
         if (!is_dir(dirname($targetPath))) {
             FileHelper::createDirectory(dirname($targetPath));
             chmod(dirname($targetPath), 0755);
+        }
+    }
+
+    public function getHremails()
+    {
+        // Get the auth manager
+        $auth = Yii::$app->authManager;
+
+        // Get the HR role
+        $hrRole = $auth->getRole('hr');
+
+        if ($hrRole) {
+            // Get user IDs assigned to the HR role
+            $userIds = $auth->getUserIdsByRole($hrRole->name);
+
+            // Query users table for emails
+            $emails = User::find()
+                ->select('email')
+                ->where(['id' => $userIds])
+                ->column();
+
+            // $emails now contains an array of email addresses
+            // print_r($emails);
+            return $emails;
+        } else {
+            // Handle case where role doesn't exist
+            Yii::error("HR role not found");
+            return [];
         }
     }
 }
