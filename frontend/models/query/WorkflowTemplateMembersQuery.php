@@ -14,6 +14,11 @@ class WorkflowTemplateMembersQuery extends \yii\db\ActiveQuery
         return $this->andWhere('[[status]]=1');
     }*/
 
+    public function init()
+    {
+        return $this->orderBy(['sequence' => SORT_ASC]);
+    }
+
     /**
      * {@inheritdoc}
      * @return \app\models\WorkflowTemplateMembers[]|array
