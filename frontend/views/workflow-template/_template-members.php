@@ -17,12 +17,18 @@ $templateMembers = $model->getWorkflowMembers()->all();
     <tbody>
         <?php foreach ($templateMembers as $templateMember):
 
-            $delete = Html::a('<i class="fas fa-trash"></i>', ['workflow-template-members/delete', 'id' => $templateMember->id], [
+            $delete = Html::a('<i class="fas fa-trash"></i>', ['workflow-template-members/delete', 'id' => $templateMember->id, 'templateID' => $model->id], [
                 'class' => 'btn btn-danger',
+                'title' => 'remove approver record.',
                 'data' => [
                     'confirm' => 'Are you sure you want to delete this item?',
                     'method' => 'post',
                 ],
+            ]);
+
+            $update = Html::a('<i class="fas fa-edit"></i>', ['workflow-template-members/update', 'id' => $templateMember->id, 'templateID' => $model->id], [
+                'class' => 'mx-1 btn btn-primary',
+                'title' => 'Update Approver',
             ]);
 
             ?>
@@ -30,7 +36,7 @@ $templateMembers = $model->getWorkflowMembers()->all();
                 <td><?= $templateMember->approver_name ?></td>
                 <td><?= $templateMember->approver_email ?></td>
                 <td><?= $templateMember->sequence ?></td>
-                <td><?= $delete ?></td>
+                <td><?= $update . $delete ?></td>
             </tr>
         <?php endforeach; ?>
     </tbody>

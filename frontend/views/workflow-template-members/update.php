@@ -14,10 +14,17 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
 ?>
 <div class="workflow-template-members-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title"><?= Html::encode($this->title) ?></h3>
+        </div>
+        <div class="card-body">
+            <?= $this->render('_form', [
+                'model' => $model,
+                'users' => $users
+            ]) ?>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+        </div>
+    </div>
 
 </div>

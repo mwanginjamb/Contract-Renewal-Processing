@@ -118,16 +118,27 @@ class WorkflowTemplateMembersController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $templateID)
     {
         $model = $this->findModel($id);
+        $users = ArrayHelper::map(User::find()->all(), 'id', 'username');
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $user = User::findOne(['id' => $this->request->post()['WorkflowTemplateMembers']['approver_name']]);
+
+            $model->workflow_id = $templateID;
+            $model->user_id = $user->id;
+            $model->approver_name = $user->username;
+            $model->approver_email = $user->email;
+            if ($model->save()) {
+                return $this->redirect(Url::toRoute(['workflow-template/view', 'id' => $templateID]));
+            }
+            // return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'users' => $users
         ]);
     }
 
@@ -138,11 +149,10 @@ class WorkflowTemplateMembersController extends Controller
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionDelete($id)
+    public function actionDelete($id, $templateID)
     {
         $this->findModel($id)->delete();
-
-        return $this->redirect(Yii::$app->request->referrer);
+        return $this->redirect(Url::toRoute(['workflow-template/view', 'id' => $templateID]));
     }
 
     /**

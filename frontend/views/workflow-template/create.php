@@ -10,11 +10,17 @@ $this->params['breadcrumbs'][] = ['label' => 'Workflow Templates', 'url' => ['in
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="workflow-template-create">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title"><?= Html::encode($this->title) ?></div>
+        </div>
+        <div class="card-body">
+            <?= $this->render('_form', [
+                'model' => $model,
+            ]) ?>
+        </div>
+    </div>
 
-    <h3 class="fw-bold"><?= Html::encode($this->title) ?></h3>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
 
 </div>
