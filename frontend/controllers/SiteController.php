@@ -101,7 +101,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        Yii::$app->utility->printrr(Yii::$app->utility->getHremails());
+        // Yii::$app->utility->printrr(Yii::$app->utility->getHremails());
         $contracts = Contracts::find()->where(['employee_number' => Yii::$app->user->identity->staff_id_number])->all();
         return $this->render('index', [
             'contracts' => $contracts
