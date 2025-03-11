@@ -56,8 +56,13 @@ class ContractsController extends Controller
                             'roles' => ['?'],
                         ],
                         [
+                            'actions' => ['index'],
+                            'allow' => true,
+                            'roles' => ['hr'],
+                        ],
+                        [
                             'actions' => [
-                                'index',
+                                //'index',
                                 'create',
                                 'update',
                                 'delete',

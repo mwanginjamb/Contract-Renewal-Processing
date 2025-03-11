@@ -2,16 +2,17 @@
 
 namespace frontend\controllers;
 
-use app\models\Contracts;
-use app\models\DurationUnits;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Controller;
+use app\models\Contracts;
 use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use app\models\ContractBatch;
+use app\models\DurationUnits;
 use common\models\ExcelImport;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use app\models\ContractBatchSearch;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -35,6 +36,34 @@ class ContractBatchController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                'access' => [
+                    'class' => AccessControl::className(),
+                    'only' => [
+                        'index',
+                        'create',
+                        'update',
+                        'delete',
+                        'view'
+                    ],
+                    'rules' => [
+                        [
+                            'actions' => ['signup'],
+                            'allow' => true,
+                            'roles' => ['?'],
+                        ],
+                        [
+                            'actions' => [
+                                'index',
+                                'create',
+                                'update',
+                                'delete',
+                                'view',
+                            ],
+                            'allow' => true,
+                            'roles' => ['hr'],
+                        ],
+                    ],
+                ]
             ]
         );
     }
