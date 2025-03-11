@@ -64,8 +64,16 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="row mx-3">
             <div class="col">
-                <h2>Approvers</h2>
-                <?= $this->render('_template-members', ['model' => $model]) ?>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Approvers</h3>
+                    </div>
+                    <div class="card-body">
+
+                        <?= $this->render('_template-members', ['model' => $model]) ?>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
