@@ -2,6 +2,7 @@
 
 namespace common\Library;
 
+use app\models\Contracts;
 use Yii;
 use app\models\User;
 use yii\base\Component;
@@ -189,14 +190,11 @@ class Utility extends Component
     {
         // Get the auth manager
         $auth = Yii::$app->authManager;
-
         // Get the HR role
         $hrRole = $auth->getRole('hr');
-
         if ($hrRole) {
             // Get user IDs assigned to the HR role
             $userIds = $auth->getUserIdsByRole($hrRole->name);
-
             // Query users table for emails
             $emails = User::find()
                 ->select('email')
@@ -204,12 +202,19 @@ class Utility extends Component
                 ->column();
 
             // $emails now contains an array of email addresses
-            // print_r($emails);
             return $emails;
         } else {
             // Handle case where role doesn't exist
             Yii::error("HR role not found");
             return [];
         }
+    }
+    public function ismycontract($id)
+    {
+        /**
+         * Check if the logged in user is the owner of the contract
+         */
+        $contract = Contracts::find()->where(['contract_number' => $id])->andWhere(['employee_number' => Yii::$app->user->identity->staff_id_number])->one();
+        return $contract ? true : false;
     }
 }

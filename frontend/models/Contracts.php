@@ -135,7 +135,7 @@ class Contracts extends \yii\db\ActiveRecord
         /**
          * Check if the logged in user is the owner of the contract
          */
-        $contract = self::find()->where(['id' => $contractID, 'approval_status' => 1])->andWhere(['employee_number' => Yii::$app->user->identity->staff_id_number])->one();
+        $contract = self::find()->where(['id' => $contractID, 'approval_status' => NULL])->andWhere(['employee_number' => Yii::$app->user->identity->staff_id_number])->one();
         return $contract ? true : false;
     }
 

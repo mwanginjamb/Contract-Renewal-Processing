@@ -64,7 +64,7 @@ class NotificationsHandler extends Component
     {
         $contract = $event->sender; // Contracts model instance
         // Generate Approval entries
-        $this->generateApprovalEntries($contract->id);
+        // $this->generateApprovalEntries($contract->id);
         // Send notification
         Yii::$app
             ->mailer
