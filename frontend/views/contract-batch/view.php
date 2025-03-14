@@ -73,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                             $accessLink = ($c->original_contract_path && Yii::$app->utility->isValidSharepointLink($c->original_contract_path)) ? $view : $update;
                             $track = \yii\bootstrap5\Html::a('<i class="fas fa-bookmark mx-1"></i>', ['../contracts/track-approval', 'id' => $c->id], ['class' => 'btn btn-warning btn-xs', 'title' => 'Track Approval', 'target' => '_blank']);
-                            $approval = (!$c->approval_status && (Yii::$app->utility->isValidSharepointLink($c->original_contract_path) && $c->original_contract_path)) ? \yii\bootstrap5\Html::a('<i class="fas fa-paper-plane mx-1"></i>Ready for Signing', '#', [
+                            $approval = (!$c->approval_status && (Yii::$app->utility->isValidSharepointLink($c->original_contract_path) && $c->original_contract_path)) ? \yii\bootstrap5\Html::a('<i class="fas fa-paper-plane mx-1"></i>Ready for Signing', ['../contracts/send-for-approval', 'id' => $c->id], [
                                 'class' => 'btn btn-info btn-xs',
                                 'title' => 'Contract is ready for signing process',
                                 'data' => [
