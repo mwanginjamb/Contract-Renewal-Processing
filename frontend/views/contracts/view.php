@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="card-body">
             <div class="my-3 d-flex justify-content-between">
                 <div class="actions">
-                    <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+                    <?= (Yii::$app->user->can('hr')) ? Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : '' ?>
                     <?php Html::a('Delete', ['delete', 'id' => $model->id], [
                         'class' => 'btn btn-danger',
                         'data' => [
@@ -39,6 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'title' => 'Track contract signing status',
                         ]
                     ) : '' ?>
+
                     <?= ($model->ismycontract($model->id) || $model->icansign($model->id)) ? Html::a(
                         '<i class="fas fa-signature"></i>Sign Contract',
                         ['sign', 'id' => $model->id],

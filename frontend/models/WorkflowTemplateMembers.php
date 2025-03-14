@@ -59,8 +59,8 @@ class WorkflowTemplateMembers extends \yii\db\ActiveRecord
             [['workflow_id'], 'exist', 'skipOnError' => true, 'targetClass' => WorkflowTemplate::class, 'targetAttribute' => ['workflow_id' => 'id']],
 
 
-            ['sequence', 'unique'],
-            [['approver_name'], 'unique', 'targetAttribute' => ['approver_name', 'approver_email', 'sequence'], 'message' => 'The combination of Approver Name, Approver Email, and Sequence must be unique.'],
+            // ['sequence', 'unique'],
+            // [['approver_name'], 'unique', 'targetAttribute' => ['approver_name', 'approver_email', 'sequence'], 'message' => 'The combination of Approver Name, Approver Email, and Sequence must be unique.'],
         ];
     }
 
