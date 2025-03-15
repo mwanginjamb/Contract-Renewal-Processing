@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use Yii;
+use app\models\User;
 use yii\web\Controller;
 use app\models\Contracts;
 use yii\filters\VerbFilter;
@@ -42,13 +43,19 @@ class SiteController extends Controller
                     'track-approval',
                     'cancel-approval',
                     'send-for-approval',
-                    'approve'
+                    'approve',
+                    'users'
                 ],
                 'rules' => [
                     [
                         'actions' => ['signup'],
                         'allow' => true,
                         'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['users'],
+                        'allow' => true,
+                        'roles' => ['admin'],
                     ],
                     [
                         'actions' => [
@@ -288,6 +295,14 @@ class SiteController extends Controller
 
         return $this->render('resendVerificationEmail', [
             'model' => $model
+        ]);
+    }
+
+    public function actionUsers()
+    {
+        $users = User::find()->select(['id', 'username', 'email', 'created_at', 'staff_id_number'])->orderBy(['created_at' => SORT_DESC])->all();
+        return $this->render('users', [
+            'users' => $users
         ]);
     }
 }
