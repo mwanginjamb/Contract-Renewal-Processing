@@ -177,7 +177,7 @@ class Contracts extends \yii\db\ActiveRecord
             // Ensure you fire this event only when previous value was pending
             if (!empty($changedAttributes['approval_status']) && $changedAttributes['approval_status'] == 1) {
                 Yii::info('Contract  ' . $this->contract_number . ' has been fully approved.');
-                $this->trigger(self::EVENT_CONTRACT_ATTACHED);
+                $this->trigger(self::EVENT_CONTRACT_FULLY_SIGNED);
             } else {
                 Yii::error('Contract full approval event not fired ' . $this->contract_number);
             }

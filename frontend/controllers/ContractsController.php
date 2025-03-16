@@ -382,7 +382,7 @@ class ContractsController extends Controller
     {
         $approvalEntryID = $id;
         $entry = WorkflowEntries::find()->where(['id' => $approvalEntryID])->one();
-        $entry->approval_status = 2;
+        $entry->approval_status = 2; // approval entry approved
         if ($entry->save()) {
             // move to next sequence 
             $nextSequence = WorkflowEntries::find()->where(['contract_id' => $entry->contract_id])
@@ -395,7 +395,7 @@ class ContractsController extends Controller
             } else {
                 // mark contract as fully approved
                 $contract = Contracts::find()->where(['id' => $entry->contract_id])->one();
-                $contract->approval_status = 2;
+                $contract->approval_status = 2; // contract approved
                 if ($contract->save()) {
                     Yii::$app->session->setFlash('success', 'contract has been fully signed and approved.');
                 }
