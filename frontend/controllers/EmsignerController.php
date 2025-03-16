@@ -504,6 +504,6 @@ class EmsignerController extends Controller
             }
 
         }
-        return $this->redirect(Url::toRoute(['success']));
+        return $this->redirect(Url::toRoute(['contracts/view', 'id' => $contractId]));
     }
 }
