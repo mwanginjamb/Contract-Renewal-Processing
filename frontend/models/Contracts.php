@@ -69,7 +69,10 @@ class Contracts extends \yii\db\ActiveRecord
             [['employee_workstation'], 'string', 'max' => 250],
             [['contract_number'], 'unique'],
             [['approval_status'], 'integer'],
-            ['contract_batch_id', 'required']
+            ['contract_batch_id', 'required'],
+
+            // Validate that employee number exists in user table staff_id_number column
+            [['employee_number'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['employee_number' => 'staff_id_number']],
 
         ];
     }

@@ -273,7 +273,7 @@ class ContractBatchController extends Controller
                 ],
                 $contractees
             )->execute();
-            Yii::$app->session->setFlash('success', $insert . '-  contracts have been imported successfully. ');
+            Yii::$app->session->setFlash('success', $insert . ' -  contracts have been imported successfully. ');
         } else {
             if (count($existing)) {
                 Yii::$app->session->setFlash('error', count($existing) . ' duplication conflicts were found on your import.');
