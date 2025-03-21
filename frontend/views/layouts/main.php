@@ -350,6 +350,13 @@ $role = implode(',', array_keys($auth->getRolesByUser(Yii::$app->user->id)));
                                             <p>Permissions</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="<?= $absoluteUrl ?>site/users" title="System Users"
+                                            class="nav-link <?= Yii::$app->utility->currentaction('duration-units', 'index') ? 'active' : '' ?>">
+                                            <i class="fa fa-users nav-icon"></i>
+                                            <p>System Users</p>
+                                        </a>
+                                    </li>
 
                                 </ul>
                             </li>
