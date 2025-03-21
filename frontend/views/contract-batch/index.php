@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <table class="table table-bordered" id="table">
                 <thead>
                     <tr>
-                        <!-- <td class="fw-bold">#</td> -->
+                        <td class="fw-bold">#</td>
                         <td class="fw-bold">Contract Batch</td>
                         <td class="fw-bold">Created Date</td>
                         <td class="fw-bold">Contract Details</td>
@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             $view = \yii\bootstrap5\Html::a('<i class="fas fa-eye mx-1"></i> View Batch', ['view', 'id' => $c->id], ['title' => 'View Contract Batch details', 'class' => 'btn btn-success btn-sm']);
                             ?>
                             <tr>
-                                <!-- <td><?= $c->id ?? '' ?></td> -->
+                                <td><?= $c->id ?? '' ?></td>
                                 <td><?= strtoupper($c->batch_description) ?? '' ?></td>
                                 <td><?= Yii::$app->formatter->asDatetime($c->created_at) ?? '' ?></td>
                                 <td>
