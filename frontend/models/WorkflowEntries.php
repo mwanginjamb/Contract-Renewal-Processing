@@ -135,7 +135,7 @@ class WorkflowEntries extends \yii\db\ActiveRecord
         parent::afterSave($insert, $changedAttributes);
 
         // check if approval_status is 1 (Pending) and has changed
-        if ($this->approval_status == 1 && ($insert || $changedAttributes['approval_status'])) {
+        if ($this->approval_status == 1) {
             // Trigger the event only if the status changed To 1
             if ($insert || $changedAttributes['approval_status'] != 1) {
                 $this->trigger(self::EVENT_STATUS_PENDING);

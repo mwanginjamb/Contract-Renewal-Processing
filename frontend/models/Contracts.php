@@ -167,7 +167,7 @@ class Contracts extends \yii\db\ActiveRecord
             Yii::$app->utility->isValidSharepointLink($this->original_contract_path)
         ) {
 
-            if (is_null($changedAttributes['original_contract_path'])) {
+            if (empty($changedAttributes['original_contract_path']) || !($changedAttributes['original_contract_path'])) {
                 Yii::info('Contract attached ' . $this->contract_number);
                 $this->trigger(self::EVENT_CONTRACT_ATTACHED);
             } else {
