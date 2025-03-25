@@ -27,9 +27,6 @@ $this->title = 'App Users';
                     <tbody>
                         <?php if ($users && is_array($users)): ?>
                             <?php foreach ($users as $c): ?>
-
-
-
                                 <tr>
                                     <td><?= strtoupper($c->id) ?? '' ?></td>
                                     <td><?= $c->username ?? '' ?></td>

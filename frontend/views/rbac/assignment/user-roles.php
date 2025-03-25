@@ -1,5 +1,6 @@
 <?php
 $this->title = 'User Roles Assignment';
+$auth = Yii::$app->authManager;
 ?>
 
 <div class="card">
@@ -12,6 +13,7 @@ $this->title = 'User Roles Assignment';
                 <tr>
                     <td class="fw-bold">User</td>
                     <td class="fw-bold">Assignment Action</td>
+                    <td class="fw-bold">Assigned Roles</td>
                 </tr>
             </thead>
             <tbody>
@@ -23,6 +25,7 @@ $this->title = 'User Roles Assignment';
                             ['assign-role', 'userId' => $user->id],
                             ['class' => 'btn btn-xs btn-primary']
                         ) ?></td>
+                        <td><?= implode(', ', array_keys($auth->getRolesByUser($user->id))) ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
