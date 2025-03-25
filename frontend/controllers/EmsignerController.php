@@ -403,8 +403,12 @@ class EmsignerController extends Controller
         $contract = Contracts::find()->where(['id' => $entry->contract_id])->one();
         if ($entry->save()) {
             // move to next sequence 
-            $nextSequence = WorkflowEntries::find()->where(['contract_id' => $entry->contract_id])
-                ->andWhere(['>', 'sequence', $entry->sequence])->one();
+            $nextSequence = WorkflowEntries::find()
+                ->where(['contract_id' => $entry->contract_id])
+                ->andWhere(['>=', 'sequence', $entry->sequence + 1])
+                ->orderBy(['sequence' => SORT_ASC])
+                ->limit(1)
+                ->one();
             if ($nextSequence) {
                 $nextSequence->approval_status = 1;
                 $nextSequence->save();
