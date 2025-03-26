@@ -167,7 +167,7 @@ class Contracts extends \yii\db\ActiveRecord
             Yii::$app->utility->isValidSharepointLink($this->original_contract_path)
         ) {
 
-            if (empty($changedAttributes['original_contract_path']) || !($changedAttributes['original_contract_path'])) {
+            if (array_key_exists('original_contract_path', $changedAttributes) && $changedAttributes['original_contract_path'] === null) {
                 Yii::info('Contract attached ' . $this->contract_number);
                 $this->trigger(self::EVENT_CONTRACT_ATTACHED);
             } else {
@@ -178,7 +178,7 @@ class Contracts extends \yii\db\ActiveRecord
         // Trigger for a fully approved contract
         if (!$insert && !is_null($this->approval_status) && $this->approval_status == 2) {
             // Ensure you fire this event only when previous value was pending
-            if (!empty($changedAttributes['approval_status']) && $changedAttributes['approval_status'] == 1) {
+            if (array_key_exists('approval_status', $changedAttributes) && $changedAttributes['approval_status'] == 1) {
                 Yii::info('Contract  ' . $this->contract_number . ' has been fully approved.');
                 $this->trigger(self::EVENT_CONTRACT_FULLY_SIGNED);
             } else {
