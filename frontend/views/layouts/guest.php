@@ -67,18 +67,26 @@ GuestAsset::register($this);
                         <div class="card1 pb-5">
 
                             <div class="row px-3 justify-content-center mt-4 mb-5 border-line">
-                                <?php if (Yii::$app->utility->currentaction('sites', 'request-password-reset')): ?>
-                                    <div class="w-50 p-3">
-                                        <img src="<?= Yii::$app->utility->webroot() ?>/images/undraw-forgot-password.svg"
+                                <?php if (Yii::$app->utility->currentaction('site', 'request-password-reset')): ?>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <img src="<?= Yii::$app->utility->webroot() ?>/images/undraw_forgot-password.svg"
                                             class="img-fluid" />
                                     </div>
-                                <?php elseif (Yii::$app->utility->currentaction('sites', 'resend-verification-email')): ?>
-                                    <div class="w-50 p-3">
-                                        <img src="<?= Yii::$app->utility->webroot() ?>/images/undraw_resend-token.svg"
+                                <?php elseif (Yii::$app->utility->currentaction('site', 'resend-verification-email')): ?>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <img src="<?= Yii::$app->utility->webroot() ?>/images/secure-login.svg"
+                                            class="img-fluid" />
+                                    </div>
+                                <?php elseif (Yii::$app->utility->currentaction('site', 'signup')): ?>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <img src="<?= Yii::$app->utility->webroot() ?>/images/signup.svg"
                                             class="img-fluid" />
                                     </div>
                                 <?php else: ?>
-                                    <img src="https://i.imgur.com/uNGdWHi.png" class="image">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <img src="<?= Yii::$app->utility->webroot() ?>/images/certificate.svg"
+                                            class="img-fluid">
+                                    </div>
                                 <?php endif; ?>
                             </div>
 
