@@ -2,13 +2,14 @@
 
 namespace frontend\controllers;
 
-use app\models\ContractBatch;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Controller;
 use app\models\Contracts;
 use yii\filters\VerbFilter;
 use yii\helpers\FileHelper;
 use yii\helpers\ArrayHelper;
+use app\models\ContractBatch;
 use app\models\DurationUnits;
 use yii\filters\AccessControl;
 use app\models\ContractsSearch;
@@ -431,6 +432,19 @@ class ContractsController extends Controller
     }
 
 
+    public function actionNextOfficer($id)
+    {
+        $currentContract = $this->findModel($id);
+        $nextContract = Contracts::find()
+            ->where(['>=', 'id', $currentContract->id + 1])
+            ->andWhere(['original_contract_path' => NULL])
+            ->one();
+        if ($nextContract) {
+            return $this->redirect(['update', 'id' => $nextContract->id]);
+        }
+        Yii::$app->session->setFlash('info', 'All contracts are ready for signing.');
+        return $this->redirect(Url::toRoute(['contract-batch/view', 'id' => $currentContract->contract_batch_id]));
+    }
 
 
 

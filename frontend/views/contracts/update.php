@@ -13,9 +13,12 @@ $this->params['breadcrumbs'][] = 'Update';
 <div class="contracts-update">
     <div class="card card-info">
         <div class="card-header">
-            <div class="card-title">
-                <h4 class="card-title"><?= Html::encode($this->title) ?></h4>
+
+            <h4 class="card-title"><?= Html::encode($this->title) ?></h4>
+            <div class="card-tools">
+                <?= (Yii::$app->user->can('hr')) ? Html::a('<i class="fas fa-arrow-right"></i> Next Officer', ['next-officer', 'id' => $model->id], ['class' => 'btn btn-dark']) : '' ?>
             </div>
+
         </div>
         <div class="card-body">
             <?= $this->render('_form', [

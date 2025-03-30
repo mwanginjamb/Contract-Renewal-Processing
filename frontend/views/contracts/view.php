@@ -21,6 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="my-3 d-flex justify-content-between">
                 <div class="actions">
                     <?= (Yii::$app->user->can('hr')) ? Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) : '' ?>
+                    <?= (Yii::$app->user->can('hr')) ? Html::a('<i class="fas fa-arrow-right"></i> Next Officer', ['next-officer', 'id' => $model->id], ['class' => 'btn btn-outline-info']) : '' ?>
                     <?php Html::a('Delete', ['delete', 'id' => $model->id], [
                         'class' => 'btn btn-danger',
                         'data' => [
