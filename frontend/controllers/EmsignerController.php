@@ -399,7 +399,7 @@ class EmsignerController extends Controller
     {
         $approvalEntryID = $id;
         $entry = WorkflowEntries::find()->where(['id' => $approvalEntryID])->one();
-        $entry->approval_status = 2;
+        $entry->approval_status = 2; // Mark entry as Approved
         $contract = Contracts::find()->where(['id' => $entry->contract_id])->one();
         if ($entry->save()) {
             // move to next sequence 
@@ -410,8 +410,10 @@ class EmsignerController extends Controller
                 ->limit(1)
                 ->one();
             if ($nextSequence) {
-                $nextSequence->approval_status = 1;
+                $nextSequence->approval_status = 1; // Mark entry as Pending
                 $nextSequence->save();
+                // Update all other entries with similar sequence and contract_id as current entry sequence to 'approved' status
+                $this->autoApprove($entry->contract_id, $entry->sequence);
                 Yii::$app->session->setFlash('success', 'You have successfully signed and pushed the contract to next reviewer.');
                 return $this->redirect(Url::toRoute(['contracts/view', 'id' => $contract->id]));
             } else {
@@ -424,6 +426,17 @@ class EmsignerController extends Controller
             return $this->redirect(Url::toRoute(['contracts/view', 'id' => $contract->id]));
         }
 
+    }
+
+    public function autoApprove($contractID, $sequence)
+    {
+        $similarEntries = WorkflowEntries::find()->where(['contract_id' => $contractID, 'approval_status' => 1])->andWhere(['sequence' => $sequence])->all();
+        if (is_array($similarEntries)) {
+            foreach ($similarEntries as $entry) {
+                $entry->approval_status = 2;
+                $entry->save();
+            }
+        }
     }
     public function actionRejectRequest($docType = "")
     {
