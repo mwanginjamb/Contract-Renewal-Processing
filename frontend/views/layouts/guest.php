@@ -68,9 +68,9 @@ GuestAsset::register($this);
 
                             <div class="row px-3 justify-content-center mt-4 mb-5 border-line">
                                 <?php if (Yii::$app->utility->currentaction('site', 'request-password-reset')): ?>
-                                    <div class="d-flex justify-content-center align-items-center">
+                                    <div class="d-flex justify-content-center align-items-start">
                                         <img src="<?= Yii::$app->utility->webroot() ?>/images/undraw_forgot-password.svg"
-                                            class="img-fluid" />
+                                            class="img-fluid  w-75 h-75" />
                                     </div>
                                 <?php elseif (Yii::$app->utility->currentaction('site', 'resend-verification-email')): ?>
                                     <div class="d-flex justify-content-center align-items-center">
@@ -78,14 +78,14 @@ GuestAsset::register($this);
                                             class="img-fluid" />
                                     </div>
                                 <?php elseif (Yii::$app->utility->currentaction('site', 'signup')): ?>
-                                    <div class="d-flex justify-content-center align-items-center">
+                                    <div class="d-flex justify-content-center align-items-start">
                                         <img src="<?= Yii::$app->utility->webroot() ?>/images/signup.svg"
                                             class="img-fluid" />
                                     </div>
                                 <?php else: ?>
-                                    <div class="d-flex justify-content-center align-items-center">
+                                    <div class="d-flex justify-content-center align-items-start">
                                         <img src="<?= Yii::$app->utility->webroot() ?>/images/certificate.svg"
-                                            class="img-fluid">
+                                            class="img-fluid w-75 h-75">
                                     </div>
                                 <?php endif; ?>
                             </div>
