@@ -491,7 +491,7 @@ class EmsignerController extends Controller
         $contractId = $contractModel->id;
         // Use the default/first Workflow Template where workflow_name is not null
         $approvalTemplate = WorkflowTemplate::find()->where(['IS NOT', 'workflow_name', NULL])->orderBy(['id' => SORT_DESC])->one();
-        Yii::info(print_r($approvalTemplate, true) . ' execution  context' . __METHOD__, 'tshoot');
+        Yii::info('Approval workflow members: ' . print_r(['template' => $approvalTemplate, 'members' => $approvalTemplate->workflowMembers], true) . ' execution  context' . __METHOD__, 'tshoot');
         if ($approvalTemplate) {
             // Get WorkflowTemplateMembers for this template
             $members = $approvalTemplate->workflowMembers;
