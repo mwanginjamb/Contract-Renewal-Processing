@@ -402,6 +402,8 @@ class EmsignerController extends Controller
         $entry->approval_status = 2; // Mark entry as Approved
         $contract = Contracts::find()->where(['id' => $entry->contract_id])->one();
         if ($entry->save()) {
+            // Update all other entries with similar sequence and contract_id as current entry sequence to 'approved' status
+            $this->autoApprove($entry->contract_id, $entry->sequence);
             // move to next sequence 
             $nextSequence = WorkflowEntries::find()
                 ->where(['contract_id' => $entry->contract_id])
@@ -409,11 +411,12 @@ class EmsignerController extends Controller
                 ->orderBy(['sequence' => SORT_ASC])
                 ->limit(1)
                 ->one();
+            Yii::info('Next Sequence: ' . print_r($nextSequence, true) . ' execution  context' . __METHOD__, 'tshoot');
             if ($nextSequence) {
                 $nextSequence->approval_status = 1; // Mark entry as Pending
-                $nextSequence->save();
-                // Update all other entries with similar sequence and contract_id as current entry sequence to 'approved' status
-                $this->autoApprove($entry->contract_id, $entry->sequence);
+                if (!$nextSequence->save()) {
+                    Yii::info('Error marking next sequence as pending: ' . print_r($nextSequence->errors, true) . ' execution  context' . __METHOD__, 'tshoot');
+                }
                 Yii::$app->session->setFlash('success', 'You have successfully signed and pushed the contract to next reviewer.');
                 return $this->redirect(Url::toRoute(['contracts/view', 'id' => $contract->id]));
             } else {
@@ -434,7 +437,9 @@ class EmsignerController extends Controller
         if (is_array($similarEntries)) {
             foreach ($similarEntries as $entry) {
                 $entry->approval_status = 2;
-                $entry->save();
+                if (!$entry->save()) {
+                    Yii::info(print_r($entry->errors, true) . ' execution  context' . __METHOD__, 'tshoot');
+                }
             }
         }
     }
@@ -486,6 +491,7 @@ class EmsignerController extends Controller
         $contractId = $contractModel->id;
         // Use the default/first Workflow Template where workflow_name is not null
         $approvalTemplate = WorkflowTemplate::find()->where(['IS NOT', 'workflow_name', NULL])->orderBy(['id' => SORT_DESC])->one();
+        Yii::info(print_r($approvalTemplate, true) . ' execution  context' . __METHOD__, 'tshoot');
         if ($approvalTemplate) {
             // Get WorkflowTemplateMembers for this template
             $members = $approvalTemplate->workflowMembers;
@@ -511,7 +517,7 @@ class EmsignerController extends Controller
                         $contractModel->save();
                         Yii::$app->session->setFlash('success', 'Approval entries created successfully.');
                     } else {
-                        //  Yii::$app->utility->printrr($workflowEntry);
+                        Yii::info(print_r($workflowEntry->errors, true) . ' execution  context' . __METHOD__, 'tshoot');
                         Yii::$app->session->setFlash('error', 'Error creating approval entries.');
                     }
 

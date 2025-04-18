@@ -44,6 +44,12 @@ return [
                     'class' => \yii\log\FileTarget::class,
                     'levels' => ['error', 'warning'],
                 ],
+                [
+                    'class' => \yii\log\FileTarget::class,
+                    'levels' => ['info'],
+                    'categories' => ['tshoot'],
+                    'logFile' => '@runtime/logs/tshoot.log',
+                ]
             ],
         ],
         'errorHandler' => [
