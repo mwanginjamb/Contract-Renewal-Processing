@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -78,17 +79,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'title' => 'Contract is ready for signing process',
                             ]) : '';
 
-                            $cancelApproval = ($c->approval_status == 1 && Yii::$app->utility->isValidSharepointLink($c->original_contract_path)) ? \yii\bootstrap5\Html::a('<i class="fas fa-times mx-1"></i> in progress ..', [
-                                'view',
-                                'id' => $model->id
-                            ], [
-                                'class' => 'btn btn-success btn-xs',
-                                'title' => 'send for Approval',
-                                'data' => [
-                                    'confirm' => 'Are you sure you want to cancel approval request for this record ?',
-                                    'method' => 'post',
+                            $cancelApproval = ($c->approval_status == 1 && Yii::$app->utility->isValidSharepointLink($c->original_contract_path)) ? \yii\bootstrap5\Html::a(
+                                '<i class="fas fa-times mx-1"></i> in progress ..',
+                                Url::toRoute(['contracts/cancel-approval', 'id' => $c->id]),
+                                [
+                                    'class' => 'btn btn-success btn-xs',
+                                    'title' => 'send for Approval',
+                                    'data' => [
+                                        'confirm' => 'Are you sure you want to cancel approval request for this record ?',
+                                        'method' => 'post',
+                                    ]
                                 ]
-                            ]) : '';
+                            ) : '';
 
                             ?>
 
