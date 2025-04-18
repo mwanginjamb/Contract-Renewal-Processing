@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'updated_at:datetime',
             //'created_by',
             //'updated_by',
-            'contract_id',
+            ['attribute' => 'contract_id', 'label' => 'Contract ID', 'value' => 'contract.contract_number'], //'contract_id',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, WorkFlowEntries $model, $key, $index, $column) {
