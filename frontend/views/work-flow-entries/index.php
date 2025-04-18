@@ -29,21 +29,33 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'template_id',
-            'approver_id',
-            'approval_status',
-            'actioned_date',
-            //'created_at',
-            //'updated_at',
+            //'id',
+            [
+                'attribute' => 'template_id',
+                'label' => 'Workflow Template',
+                'value' => 'template.workflow_name'
+            ], // workflow name',
+            [
+                'attribute' => 'approver_id',
+                'label' => 'Approver',
+                'value' => 'approver.approver_name',
+            ], //'approver_id',
+            [
+                'attribute' => 'approval_status',
+                'label' => 'Approval Status',
+                'value' => 'approvalStatus.name'
+            ], //'approval_status',
+            //'actioned_date',
+            'created_at:datetime',
+            'updated_at:datetime',
             //'created_by',
             //'updated_by',
-            //'contract_id',
+            'contract_id',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, WorkFlowEntries $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                        return Url::toRoute([$action, 'id' => $model->id]);
+                    }
             ],
         ],
     ]); ?>
