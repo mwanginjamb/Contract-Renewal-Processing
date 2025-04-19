@@ -53,7 +53,7 @@ class WorkflowEntries extends \yii\db\ActiveRecord
         return [
             [['template_id', 'approver_id', 'approval_status', 'contract_id'], 'required'],
             [['template_id', 'approver_id', 'approval_status', 'actioned_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'contract_id'], 'default', 'value' => null],
-            [['template_id', 'approver_id', 'approval_status', 'actioned_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'contract_id'], 'integer'],
+            [['template_id', 'approver_id', 'approval_status', 'actioned_date', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['approval_status'], 'exist', 'skipOnError' => true, 'targetClass' => ApprovalStatus::class, 'targetAttribute' => ['approval_status' => 'id']],
             // [['approver_id'], 'exist', 'skipOnError' => true, 'targetClass' => WorkflowTemplate::class, 'targetAttribute' => ['approver_id' => 'user_id']],
             [['contract_id'], 'exist', 'skipOnError' => true, 'targetClass' => Contracts::class, 'targetAttribute' => ['contract_id' => 'id']],

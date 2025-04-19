@@ -17,7 +17,8 @@ class WorkFlowEntriesSearch extends WorkFlowEntries
     public function rules()
     {
         return [
-            [['id', 'template_id', 'approver_id', 'approval_status', 'actioned_date', 'created_at', 'updated_at', 'created_by', 'updated_by', 'contract_id'], 'integer'],
+            [['id', 'template_id', 'approver_id', 'approval_status', 'actioned_date', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            ['contract_id', 'safe'],
         ];
     }
 
@@ -56,6 +57,10 @@ class WorkFlowEntriesSearch extends WorkFlowEntries
             return $dataProvider;
         }
 
+        // Add search for related contract table
+
+        $query->joinWith('contract');
+
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
@@ -67,8 +72,10 @@ class WorkFlowEntriesSearch extends WorkFlowEntries
             'updated_at' => $this->updated_at,
             'created_by' => $this->created_by,
             'updated_by' => $this->updated_by,
-            'contract_id' => $this->contract_id,
+            // 'contract_id' => $this->contract_id,
         ]);
+
+        $query->andFilterWhere(['like', 'contracts.contract_number', $this->contract_id]);
 
         return $dataProvider;
     }
