@@ -38,13 +38,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php if ($batches && is_array($batches)): ?>
                         <?php foreach ($batches as $c):
                             $view = \yii\bootstrap5\Html::a('<i class="fas fa-eye mx-1"></i> View Batch', ['view', 'id' => $c->id], ['title' => 'View Contract Batch details', 'class' => 'btn btn-success btn-sm']);
+                            $delete = \yii\bootstrap5\Html::a('<i class="fas fa-trash mx-1"></i> Delete Batch', ['delete', 'id' => $c->id], [
+                                'title' => 'Delete Contract Batch',
+                                'class' => 'btn btn-danger btn-sm mx-2',
+                                'data' => [
+                                    'confirm' => 'Are you sure you want to delete this record and all associated contracts ?',
+                                    'method' => 'post',
+                                ]
+                            ]);
                             ?>
                             <tr>
                                 <td><?= $c->id ?? '' ?></td>
                                 <td><?= strtoupper($c->batch_description) ?? '' ?></td>
                                 <td><?= Yii::$app->formatter->asDatetime($c->created_at) ?? '' ?></td>
                                 <td>
-                                    <?= $view ?>
+                                    <?= $view . $delete ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

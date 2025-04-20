@@ -56,12 +56,16 @@ class ContractBatchController extends Controller
                                 'index',
                                 'create',
                                 'update',
-                                'delete',
                                 'view',
                             ],
                             'allow' => true,
                             'roles' => ['hr'],
                         ],
+                        [
+                            'actions' => ['delete'],
+                            'allow' => true,
+                            'roles' => ['admin'],
+                        ]
                     ],
                 ]
             ]
@@ -152,7 +156,7 @@ class ContractBatchController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
+        Yii::$app->session->setFlash('success', 'Contract batch & related contracts deleted successfully.');
         return $this->redirect(['index']);
     }
 
