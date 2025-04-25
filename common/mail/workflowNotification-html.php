@@ -18,7 +18,7 @@ $verifyLink = Yii::$app->urlManager->createAbsoluteUrl(['contracts/approvals']);
         <tr>
             <td>Dear <b><?= $workflowEntry->approver->approver_name ?></b>, <br><br>
                 You are notified that a staff contract <?= $workflowEntry->contract->contract_number ?> is due for your
-                consideration and signing.<br>
+                consideration and <b>signing</b>.<br>
                 <br>Click button below to sign and move it to the next approver upon successful signing.
                 <br><br>
                 <b>NB:</b> You have to see a preview of the signed contract file after signing successfully in order to
@@ -36,9 +36,15 @@ $verifyLink = Yii::$app->urlManager->createAbsoluteUrl(['contracts/approvals']);
 <div class="button-container" style="display: flex;justify-content: center;margin: 20px 0;">
     <?= Html::a('View Signing Entries', $verifyLink, ['style' => 'text-decoration:none;background-color: #007bff;color: #ffffff;border: none;padding: 10px 20px;font-size: 14px;font-weight: bold;cursor: pointer;border-radius: 5px;transition: background-color 0.3s;']) ?>
 </div>
-<footer style="margin:1.5rem 0;text-align: center;font-size: 12px;border-top: 1px solid #dddddd; ">
-    <p style="color: #ffffff;padding: 10px;background-color:#5a5757;margin: 0;line-height: 1.5;">&copy; <?= date('Y') ?>
-        <?= env('DEVELOPER', 'KEMRI ICT') ?> All
-        rights reserved.
-    </p>
+<footer
+    style="margin:1.5rem 0;text-align: center;font-size: 12px;border-top: 1px solid #dddddd;display: flex;justify-content: space-between; ">
+    <div style="color: #ffffff;padding: 10px;background-color:#5a5757;margin: 0;line-height: 1.5;">&copy;
+        <?= date('Y') ?>
+        <?= env('CUSTOMER', 'KEMRI ICT') ?>
+    </div>
+    <div>
+        <span style="color: #ffffff;padding: 10px;background-color:#5a5757;margin: 0;line-height: 1.5;">Powered by KEMRI
+            ICT | Engineered By
+            <?= Html::a(env('DEVELOPER', 'Francis Njambi'), 'https://www.linkedin.com/in/francisnjambi/', ['target' => '_blank', 'title' => 'Systems Developer']) ?></span>
+    </div>
 </footer>
