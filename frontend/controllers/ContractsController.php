@@ -438,6 +438,7 @@ class ContractsController extends Controller
         $nextContract = Contracts::find()
             ->where(['>=', 'id', $currentContract->id + 1])
             ->andWhere(['original_contract_path' => NULL])
+            ->andWhere(['contract_batch_id' => $currentContract->batch->id])
             ->one();
         if ($nextContract) {
             return $this->redirect(['update', 'id' => $nextContract->id]);

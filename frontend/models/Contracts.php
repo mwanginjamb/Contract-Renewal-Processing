@@ -187,5 +187,12 @@ class Contracts extends \yii\db\ActiveRecord
         }
     }
 
+    // Get contract batch
+
+    public function getBatch()
+    {
+        return $this->hasOne(ContractBatch::class, ['id' => 'contract_batch_id']);
+    }
+
 
 }
