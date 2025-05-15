@@ -300,9 +300,22 @@ class SiteController extends Controller
 
     public function actionUsers()
     {
-        $users = User::find()->select(['id', 'username', 'email', 'created_at', 'staff_id_number'])->orderBy(['created_at' => SORT_DESC])->all();
+        $users = User::find()->select(['id', 'username', 'email', 'created_at', 'staff_id_number', 'status'])->orderBy(['created_at' => SORT_DESC])->all();
         return $this->render('users', [
             'users' => $users
         ]);
+    }
+
+    public function actionDelete()
+    {
+        // Yii::$app->utility->printrr(Yii::$app->request->post());
+        $id = Yii::$app->request->post('id');
+        $user = User::findOne($id);
+        if ($user->delete()) {
+            Yii::$app->session->setFlash('success', 'User deleted successfully.');
+        } else {
+            Yii::$app->session->setFlash('error', 'Error deleting user.');
+        }
+        return $this->redirect(['users']);
     }
 }
