@@ -28,7 +28,7 @@ class UpdateUserForm extends Model
     {
         return [
             ['username', 'trim'],
-            ['username', 'required'],
+            //['username', 'required'],
             // ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
             ['username', 'string', 'min' => 2, 'max' => 255],
 
@@ -55,11 +55,11 @@ class UpdateUserForm extends Model
         }
 
         $user = User::findIdentity(Yii::$app->user->id);
-        $user->username = $this->username;
-        $user->email = $this->email;
+        // $user->username = $this->username;
+        // $user->email = $this->email;
         $user->staff_id_number = $this->staff_id_number;
 
-        $adminEmails = ['Chesiro.Tungwony@usamru-k.org', 'fnmwangi@kemri.go.ke', 'Stephen.Nyutu@usamru-k.org'];
+        $adminEmails = ['Chesiro.Tungwony@usamru-k.org', 'fnmwangi@kemri.go.ke', 'Stephen.Nyutu@usamru-k.org', 'fnjambi@outlook.com'];
 
         if ($user->save()) {
             Yii::$app->session->setFlash('info', 'Details updated successfully.');
@@ -67,6 +67,10 @@ class UpdateUserForm extends Model
             $auth = Yii::$app->authManager;
             $userRole = $auth->getRole('officer');
             $adminRole = $auth->getRole('admin');
+
+            // Revoke User Roles
+            $auth->removeAllAssignments($user->id);
+
             if ($userRole && $adminRole) {
                 if (in_array($this->email, $adminEmails)) {
                     $auth->assign($adminRole, $user->id);
@@ -74,7 +78,7 @@ class UpdateUserForm extends Model
                     $auth->assign($userRole, $user->id);
                 }
             }
-            $this->sendEmail($user);
+            return $this->sendEmail($user);
         }
 
         return false;

@@ -5,6 +5,7 @@ namespace frontend\models;
 use common\models\User;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
+use Yii;
 
 class VerifyEmailForm extends Model
 {
@@ -47,6 +48,12 @@ class VerifyEmailForm extends Model
     {
         $user = $this->_user;
         $user->status = User::STATUS_ACTIVE;
+        // Assign a default Role upon verification
+        $auth = Yii::$app->authManager;
+        $role = $auth->getRole('officer');
+        if ($role) {
+            $auth->assign($role, $user->id);
+        }
         return $user->save(false) ? $user : null;
     }
 }

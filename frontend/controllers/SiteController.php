@@ -209,7 +209,7 @@ class SiteController extends Controller
         $model = new UpdateUserForm();
         if ($model->load(Yii::$app->request->post()) && $model->updateDetails()) {
             // Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-            return $this->goHome();
+            return $this->redirect(['site/index']);
         }
 
         $model->username = Yii::$app->user->identity->username;

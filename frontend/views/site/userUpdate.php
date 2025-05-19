@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <?php $form->errorSummary($model) ?>
 
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+                <?= $form->field($model, 'username')->textInput(['autofocus' => true, 'readonly' => true]) ?>
 
                 <?= $form->field($model, 'email')->textInput(['readonly' => true]) ?>
 
