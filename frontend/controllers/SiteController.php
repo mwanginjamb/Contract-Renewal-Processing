@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\models\UpdateUserForm;
 use Yii;
 use app\models\User;
 use yii\web\Controller;
@@ -199,6 +200,22 @@ class SiteController extends Controller
         }
 
         return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
+    public function actionUpdateUser()
+    {
+        // $this->layout = 'guest';
+        $model = new UpdateUserForm();
+        if ($model->load(Yii::$app->request->post()) && $model->updateDetails()) {
+            // Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+            return $this->goHome();
+        }
+
+        $model->username = Yii::$app->user->identity->username;
+        $model->email = Yii::$app->user->identity->email;
+        $model->staff_id_number = Yii::$app->user->identity->staff_id_number;
+        return $this->render('userUpdate', [
             'model' => $model,
         ]);
     }

@@ -11,9 +11,10 @@
 /* @var $content string 
 */
 
+use yii\helpers\Url;
 use yii\helpers\Html;
-use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Alert;
+use yii\bootstrap5\Breadcrumbs;
 use frontend\assets\AdminlteAsset;
 
 AdminlteAsset::register($this);
@@ -159,7 +160,7 @@ $role = implode(',', array_keys($auth->getRolesByUser(Yii::$app->user->id)));
                             ]
                         ]) : ''; ?>
                         <div class="dropdown-divider"></div>
-                        <?= (Yii::$app->user->isGuest) ? Html::a('<i class="fas fa-lock-open mx-1"></i> Login', '/site/login/', ['class' => 'dropdown-item']) : ''; ?>
+                        <?= (!Yii::$app->user->isGuest) ? Html::a('<i class="fas fa-lock-open mx-1"></i> Update User Details', Url::toRoute(['site/update-user']), ['class' => 'dropdown-item']) : ''; ?>
 
 
 
