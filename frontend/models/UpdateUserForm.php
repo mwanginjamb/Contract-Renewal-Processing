@@ -69,7 +69,7 @@ class UpdateUserForm extends Model
             $adminRole = $auth->getRole('admin');
 
             // Revoke User Roles
-            $auth->removeAllAssignments($user->id);
+            $auth->revokeAll($user->id);
 
             if ($userRole && $adminRole) {
                 if (in_array($this->email, $adminEmails)) {
