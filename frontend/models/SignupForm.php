@@ -27,6 +27,7 @@ class SignupForm extends Model
         return [
             ['username', 'trim'],
             ['username', 'required'],
+            ['username', 'match', 'pattern' => '/^[a-z]+\.{1}[a-z]+$/', 'message' => 'Username must be in the format name1.name2, using only lowercase letters.'],
             ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
             ['username', 'string', 'min' => 2, 'max' => 255],
 
@@ -42,6 +43,7 @@ class SignupForm extends Model
 
             ['staff_id_number', 'integer', 'min' => 10000, 'max' => 99999],
             ['staff_id_number', 'required'],
+            ['staff_id_number', 'match', 'pattern' => '/^[1-9][0-9]{4}$/', 'message' => 'Staff ID must be a 5-digit number that does not start with zero.'],
         ];
     }
 
